@@ -8,7 +8,6 @@
 int main()
 {
   RenderContext context;
-
   if (!context.init(1024, 768)) {
     context.deinit();
     return 0;
@@ -19,11 +18,13 @@ int main()
     .addFragmentShader("resources/simple.fragmentshader")
     .build();
 
-  float h = sqrt(0.75f);
+  PerspectiveCamera camera(glm::radians(45.0f), context.aspectRatio());
+  camera.position({0.0f, 0.0f, -5.0f});
+
   Object obj = createCircle(8);
 
   while (!context.exitRequest()) {
-    context.beginFrame();
+    context.beginFrame(camera.calculateViewProjectionMatrix());
     context.useShader(shader);
     context.renderObject(obj);
     context.endFrame();

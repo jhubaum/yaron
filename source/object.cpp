@@ -32,3 +32,7 @@ void Object::deinit() {
   glDeleteBuffers(1, &_vertexBuffer);
   glDeleteVertexArrays(1, &_vertexArray);
 }
+
+glm::mat4 Object::worldMatrix() const {
+  return glm::mat4(1.0f);
+}

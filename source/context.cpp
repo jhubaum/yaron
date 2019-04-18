@@ -12,6 +12,8 @@ bool RenderContext::init(uint32_t width, uint32_t height) {
     return false;
   }
 
+  _aspect = static_cast<float>(width) / height;
+
   glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -40,8 +42,9 @@ void RenderContext::deinit() {
   glfwTerminate();
 }
 
-void RenderContext::beginFrame() {
+void RenderContext::beginFrame(const glm::mat4 &viewProjectionMatrix) {
   glClear(GL_COLOR_BUFFER_BIT);
+  _viewProjectionMatrix = viewProjectionMatrix;
 }
 
 void RenderContext::endFrame() {
@@ -51,9 +54,15 @@ void RenderContext::endFrame() {
 
 void RenderContext::useShader(GLuint shader) {
   glUseProgram(shader);
+
+	// Get a handle for our "MVP" uniform
+	_mvpHandle = glGetUniformLocation(shader, "MVP");
 }
 
 void RenderContext::renderObject(const Object& object) {
+  glm::mat4 mvp = _viewProjectionMatrix * object.worldMatrix();
+  glUniformMatrix4fv(_mvpHandle, 1, GL_FALSE, &mvp[0][0]);
+
   glEnableVertexAttribArray(0);
   // Vertices (Position)
   glBindBuffer(GL_ARRAY_BUFFER, object.vertexBuffer());

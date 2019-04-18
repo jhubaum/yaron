@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -16,6 +16,8 @@ public:
   uint32_t indexCount() const { return _indexCount; }
   GLuint vertexBuffer() const { return _vertexBuffer; }
   GLuint indexBuffer() const { return _indexBuffer; }
+
+  glm::mat4 worldMatrix() const;
   
 private:
   GLuint _vertexArray;
