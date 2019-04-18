@@ -1,6 +1,8 @@
 #include <context.hpp>
 #include <shader.hpp>
 
+#include <primitives.hpp>
+
 #include <glm/glm.hpp>
 
 int main()
@@ -18,14 +20,7 @@ int main()
     .build();
 
   float h = sqrt(0.75f);
-  Object obj;
-
-  if (!obj.init({
-                 {-0.5f, -h, 0.0f},
-                 {0.5f, -h, 0.0f},
-                 {0.0f,  h, 0.0f},
-      }, {0, 1, 2}))
-    return 1;
+  Object obj = createCircle(8);
 
   while (!context.exitRequest()) {
     context.beginFrame();

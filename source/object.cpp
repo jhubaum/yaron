@@ -6,7 +6,7 @@ Object::Object()
 {}
 
 Object::~Object() {
-  deinit();
+  //deinit();
 }
 
 bool Object::init(const std::vector<glm::vec3> &vertices, const std::vector<unsigned short> &indices) {
@@ -18,7 +18,7 @@ bool Object::init(const std::vector<glm::vec3> &vertices, const std::vector<unsi
   glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vertices.size(),
                &vertices[0], GL_STATIC_DRAW);
 
-  _indexCount = vertices.size();
+  _indexCount = indices.size();
 
 	glGenBuffers(1, &_indexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
