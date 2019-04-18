@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 // Include GLEW
 #include <GL/glew.h>
 
@@ -12,6 +13,8 @@ GLFWwindow* window;
 // Include GLM
 #include <glm/glm.hpp>
 using namespace glm;
+
+#include <shader.hpp>
 
 int main( void )
 {
@@ -44,6 +47,7 @@ int main( void )
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		getchar();
 		glfwTerminate();
+
 		return -1;
 	}
 
@@ -53,6 +57,11 @@ int main( void )
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
+  GLuint shader = ShaderBuilder()
+    .addVertexShader("resources/simple.vertexshader")
+    .addFragmentShader("resources/simple.fragmentshader")
+    .build();
+  
 	do{
 		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
 		glClear( GL_COLOR_BUFFER_BIT );
