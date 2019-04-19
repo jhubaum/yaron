@@ -1,6 +1,6 @@
 #include <app.hpp>
 
-int main(char *argv[], int argc) {
+int main(int argc, char *argv[]) {
   App *pApp = allocateApplication();
 
   if (pApp->init(argv, argc)) {

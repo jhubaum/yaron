@@ -39,6 +39,7 @@ bool RenderContext::init(uint32_t width, uint32_t height) {
 }
 
 void RenderContext::deinit() {
+  _shader = nullptr;
   glfwTerminate();
 }
 
@@ -52,16 +53,15 @@ void RenderContext::endFrame() {
   glfwPollEvents();
 }
 
-void RenderContext::useShader(GLuint shader) {
-  glUseProgram(shader);
-
-	// Get a handle for our "MVP" uniform
-	_mvpHandle = glGetUniformLocation(shader, "MVP");
+void RenderContext::useShader(ShaderPtr shader) {
+  _shader = shader;
+  shader->setActive();
 }
 
 void RenderContext::renderObject(const Object& object) {
   glm::mat4 mvp = _viewProjectionMatrix * object.worldMatrix();
-  glUniformMatrix4fv(_mvpHandle, 1, GL_FALSE, &mvp[0][0]);
+
+  _shader->setMVP(mvp);
 
   glEnableVertexAttribArray(0);
   // Vertices (Position)
@@ -81,4 +81,3 @@ bool RenderContext::exitRequest() const {
   return GLFW_PRESS == glfwGetKey(_window, GLFW_KEY_ESCAPE ) ||
     glfwWindowShouldClose(_window);
 }
-

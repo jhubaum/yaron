@@ -15,7 +15,7 @@ protected:
   void vOnRender(RenderContext &context) final override;
 
 private:
-  GLuint _shader;
+  ShaderPtr _shader;
   Object _circle;
 };
 
@@ -36,7 +36,7 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 
 void FlowerApp::vOnDeinit() {
   _circle.deinit();
-  glDeleteProgram(_shader);
+  _shader = nullptr;
 }
 
 void FlowerApp::vOnRender(RenderContext &context) {

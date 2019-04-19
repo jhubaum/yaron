@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 GLuint loadShader(const std::string& filename, GLenum shaderType) {
   std::ifstream str(filename, std::ios::in);
 
@@ -67,12 +69,12 @@ ShaderBuilder& ShaderBuilder::addFragmentShader(const std::string& filename) {
   return *this;
 }
 
-GLuint ShaderBuilder::build() {
+ShaderPtr ShaderBuilder::build() {
   std::cout << "Linking shaders" << std::endl;
   
   if (0 == _vertex || 0 == _fragment) {
     std::cout << "Both vertex and fragment shader have to be set" << std::endl;
-    return 0;
+    return nullptr;
   }
 
   GLuint programId = glCreateProgram();
@@ -98,5 +100,39 @@ GLuint ShaderBuilder::build() {
   glDetachShader(programId, _vertex);
   glDetachShader(programId, _fragment);
 
-  return programId;
+  struct ShaderSharedEnabler : public Shader { };
+  auto pShader = std::make_shared<ShaderSharedEnabler>();
+  if(!pShader->init(programId))
+    return nullptr;
+  return pShader;
+}
+
+Shader::Shader() {}
+
+Shader::~Shader()
+{
+  glDeleteProgram(_program);
+}
+
+bool Shader::init(GLuint program) {
+  _program = program;
+  if (0 == _program)
+    return false;
+
+  _mvpHandle = glGetUniformLocation(_program, "MVP");
+
+  if(-1 == _mvpHandle) {
+    std::cout << "Shader: No mvp handle available." << std::endl;
+    return false;
+  }
+  return true;
+}
+
+void Shader::setActive() {
+  glUseProgram(_program);
+}
+
+void Shader::setMVP(const glm::mat4 &value)
+{
+  glUniformMatrix4fv(_mvpHandle, 1, GL_FALSE, &value[0][0]);
 }

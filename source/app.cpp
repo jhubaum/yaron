@@ -1,4 +1,5 @@
 #include <app.hpp>
+#include <iostream>
 
 App::App()
   : _camera(0.0f, 0.0f)
@@ -9,7 +10,9 @@ App::~App()
 
 
 bool App::init(char *argv[], int argc) {
-  //std::string baseName(argv[0]);
+  std::string baseName(argv[0]);
+
+  std::cout << baseName << std::endl;
 
   if (!_renderContext.init(1366, 768))
     return false;

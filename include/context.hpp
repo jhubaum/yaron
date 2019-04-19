@@ -5,6 +5,7 @@
 
 #include <object.hpp>
 #include <camera.hpp>
+#include <shader.hpp>
 
 class RenderContext {
 public:
@@ -16,7 +17,7 @@ public:
   void beginFrame(const glm::mat4 &viewProjectionMatrix);
   void endFrame();
 
-  void useShader(GLuint shader);
+  void useShader(ShaderPtr shader);
   void renderObject(const Object &object);
 
   bool exitRequest() const;
@@ -26,7 +27,7 @@ public:
 private:
   GLFWwindow *_window;
   glm::mat4 _viewProjectionMatrix;
-  GLuint _mvpHandle;
+  ShaderPtr _shader;
 
   float _aspect;
 };
