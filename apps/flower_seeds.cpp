@@ -5,34 +5,41 @@
 
 #include <glm/glm.hpp>
 
-int main()
-{
-  RenderContext context;
-  if (!context.init(1024, 768)) {
-    context.deinit();
-    return 0;
-  }
+#include <app.hpp>
 
-  GLuint shader = ShaderBuilder()
+class FlowerApp : public App {
+protected:
+  bool vOnInit(char *argv[], int argc) final override;
+  void vOnDeinit() final override;
+
+  void vOnRender(RenderContext &context) final override;
+
+private:
+  GLuint _shader;
+  Object _circle;
+};
+
+App *allocateApplication() {
+  return new FlowerApp();
+}
+
+bool FlowerApp::vOnInit(char *argv[], int argc) {
+  _shader = ShaderBuilder()
     .addVertexShader("resources/simple.vertexshader")
     .addFragmentShader("resources/simple.fragmentshader")
     .build();
 
-  PerspectiveCamera camera(glm::radians(45.0f), context.aspectRatio());
-  camera.position({0.0f, 0.0f, -5.0f});
+  _circle = createCircle(8);
 
-  Object obj = createCircle(8);
+  return true;
+}
 
-  while (!context.exitRequest()) {
-    context.beginFrame(camera.calculateViewProjectionMatrix());
-    context.useShader(shader);
-    context.renderObject(obj);
-    context.endFrame();
-  }
+void FlowerApp::vOnDeinit() {
+  _circle.deinit();
+  glDeleteProgram(_shader);
+}
 
-  obj.deinit();
-  glDeleteProgram(shader);
-  context.deinit();
-
-	return 0;
+void FlowerApp::vOnRender(RenderContext &context) {
+  context.useShader(_shader);
+  context.renderObject(_circle);
 }
