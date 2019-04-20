@@ -16,7 +16,7 @@ protected:
 
 private:
   ShaderPtr _shader;
-  Object _circle;
+  GeometryPtr _circle;
 };
 
 App *allocateApplication() {
@@ -35,11 +35,11 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 }
 
 void FlowerApp::vOnDeinit() {
-  _circle.deinit();
+  _circle = nullptr;
   _shader = nullptr;
 }
 
 void FlowerApp::vOnRender(RenderContext &context) {
   context.useShader(_shader);
-  context.renderObject(_circle);
+  context.renderGeometry(_circle, glm::mat4(1.0f));
 }

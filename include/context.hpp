@@ -18,7 +18,7 @@ public:
   void endFrame();
 
   void useShader(ShaderPtr shader);
-  void renderObject(const Object &object);
+  void renderGeometry(GeometryPtr, const glm::mat4 &mvp);
 
   bool exitRequest() const;
 

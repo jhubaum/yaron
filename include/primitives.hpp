@@ -2,4 +2,4 @@
 
 #include <object.hpp>
 
-Object createCircle(uint32_t vertexCount, float radius=1.0f);
+GeometryPtr createCircle(uint32_t vertexCount, float radius=1.0f);

@@ -58,21 +58,21 @@ void RenderContext::useShader(ShaderPtr shader) {
   shader->setActive();
 }
 
-void RenderContext::renderObject(const Object& object) {
-  glm::mat4 mvp = _viewProjectionMatrix * object.worldMatrix();
+void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world) {
+  glm::mat4 mvp = _viewProjectionMatrix * world;
 
   _shader->setMVP(mvp);
 
   glEnableVertexAttribArray(0);
   // Vertices (Position)
-  glBindBuffer(GL_ARRAY_BUFFER, object.vertexBuffer());
+  glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer());
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
   // Indices
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object.indexBuffer());
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->indexBuffer());
 
   // Draw Triangles
-  glDrawElements(GL_TRIANGLES, object.indexCount(), GL_UNSIGNED_SHORT, (void*)0);
+  glDrawElements(GL_TRIANGLES, geometry->indexCount(), GL_UNSIGNED_SHORT, (void*)0);
 
   glDisableVertexAttribArray(0);
 }

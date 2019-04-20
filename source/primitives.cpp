@@ -7,7 +7,7 @@
 
 const float PI = 3.141592;
 
-Object createCircle(uint32_t vertexCount, float radius) {
+GeometryPtr createCircle(uint32_t vertexCount, float radius) {
   std::vector<glm::vec3> vertices(vertexCount);
   for (int i=0; i<vertexCount; ++i) {
     float angle = 2 * PI * i / vertexCount;
@@ -21,9 +21,5 @@ Object createCircle(uint32_t vertexCount, float radius) {
     indices.push_back(i + 2);
   }
 
-  Object obj;
-
-  obj.init(vertices, indices);
-
-  return obj;
+  return Geometry::create(vertices, indices);
 }

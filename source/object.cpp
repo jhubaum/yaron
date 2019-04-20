@@ -1,15 +1,26 @@
 #include <object.hpp>
 
+Geometry::Geometry() {
 
-Object::Object()
-  : _vertexArray(0), _vertexBuffer(0), _indexCount(0)
-{}
-
-Object::~Object() {
-  //deinit();
 }
 
-bool Object::init(const std::vector<glm::vec3> &vertices, const std::vector<unsigned short> &indices) {
+Geometry::~Geometry() {
+  glDeleteBuffers(1, &_indexBuffer);
+  glDeleteBuffers(1, &_vertexBuffer);
+  glDeleteVertexArrays(1, &_vertexArray);
+}
+
+
+GeometryPtr Geometry::create(const std::vector<glm::vec3> &vertices, const std::vector<unsigned short> &indices) {
+  struct SharedEnabler : public Geometry { };
+
+  GeometryPtr res = std::make_shared<SharedEnabler>();
+  if (!res->init(vertices, indices))
+    return nullptr;
+  return res;
+}
+
+bool Geometry::init(const std::vector<glm::vec3> &vertices, const std::vector<unsigned short> &indices) {
   glGenVertexArrays(1, &_vertexArray);
   glBindVertexArray(_vertexArray);
 
@@ -25,14 +36,4 @@ bool Object::init(const std::vector<glm::vec3> &vertices, const std::vector<unsi
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
 
   return true;
-}
-
-void Object::deinit() {
-  glDeleteBuffers(1, &_indexBuffer);
-  glDeleteBuffers(1, &_vertexBuffer);
-  glDeleteVertexArrays(1, &_vertexArray);
-}
-
-glm::mat4 Object::worldMatrix() const {
-  return glm::mat4(1.0f);
 }
