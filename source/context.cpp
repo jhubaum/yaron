@@ -33,7 +33,7 @@ bool RenderContext::init(uint32_t width, uint32_t height) {
   }
   
 	glfwSetInputMode(_window, GLFW_STICKY_KEYS, GL_TRUE);
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
   return true;
 }
