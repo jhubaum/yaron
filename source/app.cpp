@@ -17,6 +17,8 @@ bool App::init(char *argv[], int argc) {
   if (!_renderContext.init(1366, 768))
     return false;
 
+  _lastTime = glfwGetTime();
+
   _camera = PerspectiveCamera(glm::radians(45.0f), _renderContext.aspectRatio());
   _camera.position({0.0f, 0.0f, -5.0f});
 
@@ -32,7 +34,9 @@ void App::deinit() {
 
 
 void App::update() {
-  vOnUpdate(0.0f, 0.0f);
+  float time = glfwGetTime();
+  vOnUpdate(time-_lastTime);
+  _lastTime = time;
 }
 
 

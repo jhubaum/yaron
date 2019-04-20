@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <transform.hpp>
+
 class Geometry;
 typedef std::shared_ptr<Geometry> GeometryPtr;
 
@@ -28,4 +30,13 @@ private:
   GLuint _indexBuffer;
 
   uint32_t _indexCount;
+};
+
+struct Object {
+  Object();
+  Object(GeometryPtr);
+  Object(GeometryPtr, const Transform&);
+
+  GeometryPtr geometry;
+  Transform transform;
 };

@@ -23,12 +23,14 @@ protected:
   virtual bool vOnInit(char *argv[], int argc) { return true; }
   virtual void vOnDeinit() { }
 
-  virtual void vOnUpdate(float dt, float time) { }
+  virtual void vOnUpdate(float dt) { }
   virtual void vOnRender(RenderContext &context) { }
 
 private:
   RenderContext _renderContext;
   PerspectiveCamera _camera;
+
+  float _lastTime;
 };
 
 App *allocateApplication();

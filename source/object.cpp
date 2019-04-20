@@ -37,3 +37,15 @@ bool Geometry::init(const std::vector<glm::vec3> &vertices, const std::vector<un
 
   return true;
 }
+
+Object::Object()
+  : geometry(nullptr), transform(Transform())
+{}
+
+Object::Object(GeometryPtr geometry)
+  : Object(geometry, Transform())
+{}
+
+Object::Object(GeometryPtr geometry, const Transform &t)
+  : geometry(geometry), transform(t)
+{}
