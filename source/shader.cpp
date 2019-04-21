@@ -71,7 +71,7 @@ ShaderBuilder& ShaderBuilder::addFragmentShader(const std::string& filename) {
 
 ShaderPtr ShaderBuilder::build() {
   std::cout << "Linking shaders" << std::endl;
-  
+
   if (0 == _vertex || 0 == _fragment) {
     std::cout << "Both vertex and fragment shader have to be set" << std::endl;
     return nullptr;
@@ -107,7 +107,9 @@ ShaderPtr ShaderBuilder::build() {
   return pShader;
 }
 
-Shader::Shader() {}
+Shader::Shader()
+  : _program(-1), _mvpHandle(-1), _drawMode(DrawMode::Triangles)
+{}
 
 Shader::~Shader()
 {

@@ -31,7 +31,7 @@ bool RenderContext::init(uint32_t width, uint32_t height) {
     std::cout << "Failed to initialize GLEW" << std::endl;
     return false;
   }
-  
+
 	glfwSetInputMode(_window, GLFW_STICKY_KEYS, GL_TRUE);
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
@@ -60,7 +60,6 @@ void RenderContext::useShader(ShaderPtr shader) {
 
 void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world) {
   glm::mat4 mvp = _viewProjectionMatrix * world;
-
   _shader->setMVP(mvp);
 
   glEnableVertexAttribArray(0);
@@ -72,7 +71,7 @@ void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->indexBuffer());
 
   // Draw Triangles
-  glDrawElements(GL_TRIANGLES, geometry->indexCount(), GL_UNSIGNED_SHORT, (void*)0);
+  glDrawElements(static_cast<GLenum>(_shader->drawMode()), geometry->indexCount(), GL_UNSIGNED_SHORT, (void*)0);
 
   glDisableVertexAttribArray(0);
 }

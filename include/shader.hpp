@@ -24,6 +24,20 @@ private:
   GLuint _fragment;
 };
 
+enum class DrawMode : GLenum {
+   Points = GL_POINTS,
+   LineStrip = GL_LINE_STRIP,
+   LineLoop = GL_LINE_LOOP,
+   Lines = GL_LINES,
+   LineStrupAdjacency = GL_LINE_STRIP_ADJACENCY,
+   LinesAdjacency = GL_LINES_ADJACENCY,
+   TriangleStrip = GL_TRIANGLE_STRIP,
+   TriangleFan = GL_TRIANGLE_FAN,
+   Triangles = GL_TRIANGLES,
+   TriangleStripAdjacency = GL_TRIANGLE_STRIP_ADJACENCY,
+   TrianglesAdjacency = GL_TRIANGLES_ADJACENCY
+};
+
 class Shader {
   friend class ShaderBuilder;
 public:
@@ -32,10 +46,14 @@ public:
   void setActive();
   void setMVP(const glm::mat4 &value);
 
+  void drawMode(DrawMode value) { _drawMode = value; }
+  DrawMode drawMode() const { return _drawMode; }
+
 private:
   Shader();
   bool init(GLuint);
 
   GLuint _program;
   GLuint _mvpHandle;
+  DrawMode _drawMode;
 };
