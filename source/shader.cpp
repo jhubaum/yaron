@@ -138,3 +138,13 @@ void Shader::setMVP(const glm::mat4 &value)
 {
   glUniformMatrix4fv(_mvpHandle, 1, GL_FALSE, &value[0][0]);
 }
+
+void Shader::setColor(const std::string &name, const Color &c) {
+  GLuint handle = glGetUniformLocation(_program, name.c_str());
+  if (-1 == handle) {
+    std::cout << "Shader: Unknown parameter name " << name << std::endl;
+    return;
+  }
+  glUniform4f(handle, c.r, c.g, c.b, c.a);
+}
+

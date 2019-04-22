@@ -24,6 +24,8 @@ public:
 
   float aspectRatio() const { return _aspect; }
 
+  void clearColor(const Color &c);
+
 private:
   GLFWwindow *_window;
   glm::mat4 _viewProjectionMatrix;

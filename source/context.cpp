@@ -80,3 +80,7 @@ bool RenderContext::exitRequest() const {
   return GLFW_PRESS == glfwGetKey(_window, GLFW_KEY_ESCAPE ) ||
     glfwWindowShouldClose(_window);
 }
+
+void RenderContext::clearColor(const Color &c) {
+	glClearColor(c.r, c.g, c.b, c.a);
+}

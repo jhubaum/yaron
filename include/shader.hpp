@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <glm/fwd.hpp>
 
+#include <color.hpp>
+
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 
@@ -48,6 +50,8 @@ public:
 
   void drawMode(DrawMode value) { _drawMode = value; }
   DrawMode drawMode() const { return _drawMode; }
+
+  void setColor(const std::string &name, const Color &c);
 
 private:
   Shader();
