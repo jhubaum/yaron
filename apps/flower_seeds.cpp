@@ -60,6 +60,8 @@ void FlowerApp::vOnUpdate(float dt) {
 void FlowerApp::vOnRender(RenderContext &context) {
   context.useShader(_shader);
 
+  _shader->setColor("mainColor", Color::purple);
+
   for(int i=0; i<_seeds.size(); ++i)
     context.renderGeometry(_seeds[i].geometry, _seeds[i].transform.calculateWorld());
 }
