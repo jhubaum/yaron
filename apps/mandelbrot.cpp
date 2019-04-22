@@ -39,7 +39,7 @@ public:
 
 protected:
   bool vOnInit(char *argv[], int argc) final override;
-  void vOnRender(RenderContext &context) final override;
+  void vOnRender() final override;
 
 private:
   void initIterations(const ComplexNumber &constant);
@@ -49,6 +49,8 @@ private:
   std::vector<IterationStep> _coordinates;
   ShaderPtr _shader;
   Object _line;
+
+  std::shared_ptr<PerspectiveCamera> _camera;
 };
 
 App *allocateApplication() {
@@ -61,6 +63,9 @@ bool MandelbrotApp::vOnInit(char *argv[], int argc) {
     .addFragmentShader("resources/simple.fragmentshader")
     .build();
 
+  _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
+  _camera->transform().position.z = -5.0f;
+
   _geometry = createCircle(8, 0.02f);
 
   initIterations(-0.5f + 0.5f * ComplexNumber::i);
@@ -68,19 +73,22 @@ bool MandelbrotApp::vOnInit(char *argv[], int argc) {
   return true;
 }
 
-void MandelbrotApp::vOnRender(RenderContext &context) {
-  context.useShader(_shader);
+void MandelbrotApp::vOnRender() {
+  renderContext()->beginFrame(_camera);
+  renderContext()->useShader(_shader);
 
   _shader->setColor("mainColor", Color::grey);
   _shader->drawMode(DrawMode::LineStrip);
-  context.renderGeometry(_line.geometry, glm::mat4(1.0f));
+  renderContext()->renderGeometry(_line.geometry, glm::mat4(1.0f));
   _shader->drawMode(DrawMode::Triangles);
 
 
   for(int i=0; i<_coordinates.size(); ++i) {
     _shader->setColor("mainColor", _coordinates[i].col);
-    context.renderGeometry(_geometry, _coordinates[i].worldMatrix);
+    renderContext()->renderGeometry(_geometry, _coordinates[i].worldMatrix);
   }
+
+  renderContext()->endFrame();
 }
 
 void MandelbrotApp::initIterations(const ComplexNumber &constant) {

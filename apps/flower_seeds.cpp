@@ -4,6 +4,9 @@
 #include <primitives.hpp>
 #include <transform.hpp>
 
+
+#include <iostream>
+
 #include <vector>
 
 #include <glm/gtc/constants.hpp>
@@ -11,7 +14,8 @@
 class FlowerApp : public App {
 public:
   FlowerApp(uint32_t seedCount, float radius)
-    : _seeds(seedCount), _radius(radius), _currentRotation(0.0f)
+    : _camera(nullptr), _seeds(seedCount), _radius(radius),
+      _currentRotation(0.0f)
   { }
 
 protected:
@@ -19,12 +23,13 @@ protected:
   void vOnDeinit() final override;
 
   void vOnUpdate(float dt) final override;
-  void vOnRender(RenderContext &context) final override;
+  void vOnRender() final override;
 
 private:
   void updateRotation(float value);
 
   ShaderPtr _shader;
+  std::shared_ptr<PerspectiveCamera> _camera;
   std::vector<Object> _seeds;
   float _radius;
   float _currentRotation;
@@ -39,6 +44,11 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
     .addVertexShader("resources/simple.vertexshader")
     .addFragmentShader("resources/simple.fragmentshader")
     .build();
+
+  _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
+
+  std::cout << _camera << std::endl;
+  _camera->transform().position.z = -5.0f;
 
   auto circleGeometry = createCircle(8, _radius);
 
@@ -57,13 +67,16 @@ void FlowerApp::vOnUpdate(float dt) {
   updateRotation(_currentRotation);
 }
 
-void FlowerApp::vOnRender(RenderContext &context) {
-  context.useShader(_shader);
+void FlowerApp::vOnRender() {
+  renderContext()->beginFrame(_camera);
+  renderContext()->useShader(_shader);
 
   _shader->setColor("mainColor", Color::purple);
 
   for(int i=0; i<_seeds.size(); ++i)
-    context.renderGeometry(_seeds[i].geometry, _seeds[i].transform.calculateWorld());
+    renderContext()->renderGeometry(_seeds[i].geometry, _seeds[i].transform);
+
+  renderContext()->endFrame();
 }
 
 void FlowerApp::updateRotation(float value) {

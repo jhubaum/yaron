@@ -2,17 +2,36 @@
 
 #include <iostream>
 
-RenderContext::RenderContext()
-  : _window(nullptr)
+RenderSettings::RenderSettings()
+  : width(1366), height(768), windowName("Empty Window Name"),
+    clearColor(Color::white)
 {}
 
-bool RenderContext::init(uint32_t width, uint32_t height) {
+RenderContext::RenderContext()
+{}
+
+RenderContextPtr RenderContext::create(const RenderSettings &settings) {
+  struct SharedEnabler : public RenderContext { };
+
+  RenderContextPtr ptr = std::make_shared<SharedEnabler>();
+
+  if (ptr->init(settings))
+    return ptr;
+  return nullptr;
+}
+
+RenderContext::~RenderContext() {
+  glfwTerminate();
+  std::cout << "Deleted RenderContext" << std::endl;
+}
+
+bool RenderContext::init(const RenderSettings &settings) {
   if (!glfwInit()) {
     std::cout << "Failed to initialize GLFW\n" << std::endl;
     return false;
   }
 
-  _aspect = static_cast<float>(width) / height;
+  _aspect = static_cast<float>(settings.width) / settings.height;
 
   glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -20,8 +39,9 @@ bool RenderContext::init(uint32_t width, uint32_t height) {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	_window = glfwCreateWindow(width, height, "Window", NULL, NULL);
-  if (NULL == _window) {
+	_window = glfwCreateWindow(settings.width, settings.height,
+                             settings.windowName.c_str(), NULL, NULL);
+  if (nullptr == _window) {
     std::cout << "Failed to open GLFW window" << std::endl;
     return false;
   }
@@ -32,20 +52,15 @@ bool RenderContext::init(uint32_t width, uint32_t height) {
     return false;
   }
 
+  clearColor(settings.clearColor);
 	glfwSetInputMode(_window, GLFW_STICKY_KEYS, GL_TRUE);
-	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
   return true;
 }
 
-void RenderContext::deinit() {
-  _shader = nullptr;
-  glfwTerminate();
-}
-
-void RenderContext::beginFrame(const glm::mat4 &viewProjectionMatrix) {
+void RenderContext::beginFrame(std::weak_ptr<Camera> camera) {
+  _camera = camera;
   glClear(GL_COLOR_BUFFER_BIT);
-  _viewProjectionMatrix = viewProjectionMatrix;
 }
 
 void RenderContext::endFrame() {
@@ -53,14 +68,23 @@ void RenderContext::endFrame() {
   glfwPollEvents();
 }
 
-void RenderContext::useShader(ShaderPtr shader) {
+void RenderContext::useShader(std::weak_ptr<Shader> shader) {
   _shader = shader;
-  shader->setActive();
+  _shader.lock()->setActive();
+}
+
+void RenderContext::renderGeometry(GeometryPtr geometry, const Transform &transform) {
+  renderGeometry(geometry, transform.calculateWorld());
 }
 
 void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world) {
-  glm::mat4 mvp = _viewProjectionMatrix * world;
-  _shader->setMVP(mvp);
+  if (_camera.expired())
+    std::cout << "RenderContext: Camera is expired" << std::endl;
+  if (_shader.expired())
+    std::cout << "RenderContext: Shader is expired" << std::endl;
+
+  auto shader = _shader.lock();
+  shader->setMVP(_camera.lock()->calculateViewProjectionMatrix() * world);
 
   glEnableVertexAttribArray(0);
   // Vertices (Position)
@@ -71,7 +95,7 @@ void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->indexBuffer());
 
   // Draw Triangles
-  glDrawElements(static_cast<GLenum>(_shader->drawMode()), geometry->indexCount(), GL_UNSIGNED_SHORT, (void*)0);
+  glDrawElements(static_cast<GLenum>(shader->drawMode()), geometry->indexCount(), GL_UNSIGNED_SHORT, (void*)0);
 
   glDisableVertexAttribArray(0);
 }

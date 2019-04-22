@@ -13,10 +13,9 @@ public:
 
   void update();
   void render();
-  
+
   bool exitRequest();
 
-  const std::string& applicationName() const;
   std::string resourcePath(const std::string &name) const;
 
 protected:
@@ -24,12 +23,12 @@ protected:
   virtual void vOnDeinit() { }
 
   virtual void vOnUpdate(float dt) { }
-  virtual void vOnRender(RenderContext &context) { }
+  virtual void vOnRender() { }
+
+  RenderContextPtr renderContext() { return _renderContext; }
 
 private:
-  RenderContext _renderContext;
-  PerspectiveCamera _camera;
-
+  RenderContextPtr _renderContext;
   float _lastTime;
 };
 

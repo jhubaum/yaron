@@ -7,18 +7,30 @@
 #include <camera.hpp>
 #include <shader.hpp>
 
+#include <memory>
+
+class RenderContext;
+typedef std::shared_ptr<RenderContext> RenderContextPtr;
+
+struct RenderSettings {
+  RenderSettings();
+
+  uint32_t width, height;
+  std::string windowName;
+  Color clearColor;
+};
+
 class RenderContext {
 public:
-  RenderContext();
+  ~RenderContext();
+  static RenderContextPtr create(const RenderSettings&);
 
-  bool init(uint32_t width, uint32_t height);
-  void deinit();
-
-  void beginFrame(const glm::mat4 &viewProjectionMatrix);
+  void beginFrame(std::weak_ptr<Camera> camera);
   void endFrame();
 
-  void useShader(ShaderPtr shader);
-  void renderGeometry(GeometryPtr, const glm::mat4 &mvp);
+  void useShader(std::weak_ptr<Shader> shader);
+  void renderGeometry(GeometryPtr, const glm::mat4 &world);
+  void renderGeometry(GeometryPtr, const Transform &transform);
 
   bool exitRequest() const;
 
@@ -27,9 +39,13 @@ public:
   void clearColor(const Color &c);
 
 private:
+  RenderContext();
+  bool init(const RenderSettings &settings);
+
   GLFWwindow *_window;
-  glm::mat4 _viewProjectionMatrix;
-  ShaderPtr _shader;
+
+  std::weak_ptr<Shader> _shader;
+  std::weak_ptr<Camera> _camera;
 
   float _aspect;
 };
