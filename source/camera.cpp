@@ -33,7 +33,7 @@ glm::mat4 PerspectiveCamera::calculateViewProjectionMatrix() const {
   auto rot = glm::mat3_cast(_transform.rotation);
 
   return glm::perspective(_fov, _aspect, near(), far()) *
-    glm::lookAt(_transform.position, glm::vec3(0.0f, 0.0f, 1.0f) * rot,
-                glm::vec3(0.0f, 1.0f, 0.0f) * rot);
+    glm::lookAt(_transform.position, _transform.position + rot * glm::vec3(0.0f, 0.0f, 1.0f),
+                rot * glm::vec3(0.0f, 1.0f, 0.0f));
 }
 

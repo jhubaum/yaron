@@ -11,6 +11,8 @@
 
 #include <glm/gtc/constants.hpp>
 
+#include <controls.hpp>
+
 class FlowerApp : public App {
 public:
   FlowerApp(uint32_t seedCount, float radius)
@@ -33,6 +35,7 @@ private:
   std::vector<Object> _seeds;
   float _radius;
   float _currentRotation;
+  Controller _controller;
 };
 
 App *allocateApplication() {
@@ -47,8 +50,9 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
 
-  std::cout << _camera << std::endl;
   _camera->transform().position.z = -5.0f;
+
+  _controller = Controller(_camera, renderContext()->window());
 
   auto circleGeometry = createCircle(8, _radius);
 
@@ -65,6 +69,8 @@ void FlowerApp::vOnDeinit() {
 void FlowerApp::vOnUpdate(float dt) {
   _currentRotation += 0.01f * dt;
   updateRotation(_currentRotation);
+
+  _controller.update(dt);
 }
 
 void FlowerApp::vOnRender() {

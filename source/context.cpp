@@ -22,7 +22,6 @@ RenderContextPtr RenderContext::create(const RenderSettings &settings) {
 
 RenderContext::~RenderContext() {
   glfwTerminate();
-  std::cout << "Deleted RenderContext" << std::endl;
 }
 
 bool RenderContext::init(const RenderSettings &settings) {

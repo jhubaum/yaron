@@ -38,6 +38,8 @@ public:
 
   void clearColor(const Color &c);
 
+  GLFWwindow* window() { return _window; }
+
 private:
   RenderContext();
   bool init(const RenderSettings &settings);

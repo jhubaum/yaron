@@ -5,12 +5,10 @@
 
 #include <iostream>
 
-const float PI = 3.141592;
-
 GeometryPtr createCircle(uint32_t vertexCount, float radius) {
   std::vector<glm::vec3> vertices(vertexCount);
   for (int i=0; i<vertexCount; ++i) {
-    float angle = 2 * PI * i / vertexCount;
+    float angle = 2 * glm::pi<float>() * i / vertexCount;
     vertices[i] = {radius * cos(angle), radius * sin(angle), 0.0f};
   }
 
