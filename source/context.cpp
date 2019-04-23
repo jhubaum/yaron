@@ -83,7 +83,7 @@ void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world)
     std::cout << "RenderContext: Shader is expired" << std::endl;
 
   auto shader = _shader.lock();
-  shader->setMVP(_camera.lock()->calculateViewProjectionMatrix() * world);
+  shader->setMVP(_camera.lock()->viewProjectionMatrix() * world);
 
   glEnableVertexAttribArray(0);
   // Vertices (Position)

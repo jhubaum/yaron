@@ -8,7 +8,7 @@ public:
   Camera(float near, float far);
   virtual ~Camera() = 0;
 
-  virtual glm::mat4 calculateViewProjectionMatrix() const = 0;
+  glm::mat4 viewProjectionMatrix() const;
 
   float near() const;
   float far() const;
@@ -16,9 +16,16 @@ public:
   void near(float value);
   void far(float value);
 
+  Transform& transform();
+
+protected:
+  virtual glm::mat4 projectionMatrix() const = 0;
+
 private:
   float _near;
   float _far;
+
+  Transform _transform;
 };
 
 class PerspectiveCamera : public Camera {
@@ -28,20 +35,37 @@ public:
   float fov() const;
   float aspect() const;
 
-  Transform& transform();
-
   void fov(float value);
   void aspect(float value);
 
-  void position(const glm::vec3& value);
-  void forward(const glm::vec3& value);
-  void up(const glm::vec3& value);
-
-  glm::mat4 calculateViewProjectionMatrix() const final override;
+protected:
+  glm::mat4 projectionMatrix() const final override;
 
 private:
   float _fov;
   float _aspect;
+};
 
-  Transform _transform;
+class OrthographicCamera : public Camera {
+public:
+  OrthographicCamera(float left, float right, float bottom, float top, float near=0.1f, float far=100.0f);
+
+  float left() const;
+  float right() const;
+  float bottom() const;
+  float top() const;
+
+  void left(float value);
+  void right(float value);
+  void bottom(float value);
+  void top(float value);
+
+protected:
+  glm::mat4 projectionMatrix() const final override;
+
+private:
+  float _left;
+  float _right;
+  float _bottom;
+  float _top;
 };

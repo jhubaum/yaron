@@ -3,6 +3,8 @@
 #include <shader.hpp>
 #include <primitives.hpp>
 
+#include <input.hpp>
+
 #include <vector>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -39,6 +41,7 @@ public:
 
 protected:
   bool vOnInit(char *argv[], int argc) final override;
+  void vOnUpdate(float dt) final override;
   void vOnRender() final override;
 
 private:
@@ -50,7 +53,9 @@ private:
   ShaderPtr _shader;
   Object _line;
 
-  std::shared_ptr<PerspectiveCamera> _camera;
+  std::shared_ptr<OrthographicCamera> _camera;
+
+  InputManager _input;
 };
 
 App *allocateApplication() {
@@ -63,14 +68,21 @@ bool MandelbrotApp::vOnInit(char *argv[], int argc) {
     .addFragmentShader("resources/simple.fragmentshader")
     .build();
 
-  _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
+  _camera = std::make_shared<OrthographicCamera>(-4.0f, 2.0f, -1.6f, 1.6f);
   _camera->transform().position.z = -5.0f;
 
+  _input = InputManager(renderContext()->window());
   _geometry = createCircle(8, 0.02f);
 
-  initIterations(-0.5f + 0.5f * ComplexNumber::i);
-
   return true;
+}
+
+void MandelbrotApp::vOnUpdate(float dt) {
+  glm::vec2 pos = _input.mousePosition();
+  float re = _camera->left() + pos[0] * (_camera->right() - _camera->left());
+  float im = _camera->bottom() + pos[1] * (_camera->top() - _camera->bottom());
+
+  initIterations(ComplexNumber(-re, im));
 }
 
 void MandelbrotApp::vOnRender() {
