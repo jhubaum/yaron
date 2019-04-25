@@ -48,6 +48,12 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
     .addFragmentShader("resources/simple.fragmentshader")
     .build();
 
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
 
   _camera->transform().position.z = -5.0f;
@@ -78,6 +84,11 @@ void FlowerApp::vOnRender() {
   renderContext()->useShader(_shader);
 
   _shader->setColor("mainColor", Color::purple);
+
+  static auto sphere = createSphere(4, 1);
+  renderContext()->renderGeometry(sphere, glm::mat4(1.0f));
+  renderContext()->endFrame();
+  return;
 
   for(int i=0; i<_seeds.size(); ++i)
     renderContext()->renderGeometry(_seeds[i].geometry, _seeds[i].transform);

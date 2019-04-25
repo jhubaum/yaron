@@ -59,7 +59,7 @@ bool RenderContext::init(const RenderSettings &settings) {
 
 void RenderContext::beginFrame(std::weak_ptr<Camera> camera) {
   _camera = camera;
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void RenderContext::endFrame() {
