@@ -17,9 +17,8 @@ struct VertexP {
   {}
 };
 
-struct VertexPCN {
+struct VertexPN {
   glm::vec3 pos;
-  glm::vec3 col;
   glm::vec3 normal;
 };
 

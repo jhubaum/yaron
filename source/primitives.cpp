@@ -7,6 +7,16 @@
 
 #include <iostream>
 
+void addNormals(std::vector<VertexPN> &vertices, unsigned short a, unsigned short b, unsigned short c) {
+  glm::vec3 normal = glm::cross(vertices[c].pos - vertices[a].pos,
+                                vertices[b].pos - vertices[a].pos);
+  normal = glm::normalize(normal);
+
+  vertices[a].normal = normal;
+  vertices[b].normal = normal;
+  vertices[c].normal = normal;
+}
+
 GeometryPtr createCircle(uint32_t vertexCount, float radius) {
   std::vector<VertexP> vertices(vertexCount);
   for (int i=0; i<vertexCount; ++i) {
@@ -33,23 +43,43 @@ float calcAngleFromRot(int i, int size) {
   return calcAngleFromRot(static_cast<float>(i) / size);
 }
 
+GeometryPtr createTriangle() {
+  std::vector<VertexPN> vertices(3);
+  for (int i=0; i<3; ++i) {
+    float angle = calcAngleFromRot(i, 3);
+    vertices[i].pos = glm::vec3(cos(angle), sin(angle), 0.0f);
+  }
+
+  std::vector<unsigned short> indices = {0, 2, 1};
+  addNormals(vertices, 0, 2, 1);
+  return Geometry<VertexPN>::create(vertices, indices);
+};
+
 GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
   // Lon: vertical lines
   // Lat: horizontal lines
+  return createTriangle();
 
-  std::vector<VertexP> vertices = { glm::vec3(0.0f, radius, 0.0f),
-                                      glm::vec3(0.0f, -radius, 0.0f) };
+  /*
+
+  std::vector<VertexPN> vertices(2);
+  vertices[0].pos = glm::vec3(0.0f, radius, 0.0f);
+  vertices[0].pos = glm::vec3(0.0f, -radius, 0.0f);
 
   latCount += 1;
   for (int i=1; i<latCount; ++i) {
     for (int j=0; j<lonCount; ++j) {
       float angle = 2 * glm::pi<float>() * j / lonCount;
-      auto vertex = glm::vec3(radius * cos(angle),
-                              radius - 2.0f * (static_cast<float>(i) / latCount)*radius,
-                              radius * sin(angle));
-      vertices.push_back({vertex});
+      VertexPN vertex;
+      vertex.pos = glm::vec3(radius * cos(angle),
+                             radius - 2.0f * (static_cast<float>(i) / latCount)*radius,
+                             radius * sin(angle));
+      vertices.push_back(vertex);
     }
   }
+
+  //vertices[0].normal = glm::vec3(0.0f, radius, 0.0f);
+  //vertices[0].normal = glm::vec3(0.0f, -radius, 0.0f);
 
 
   std::vector<unsigned short> indices =
@@ -62,10 +92,10 @@ GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
      1, 4, 5
     };
 
+  for(int i=0; i<indices.size()/3; ++i)
+    addNormals(vertices, indices[i], indices[i+1], indices[i+2]);
 
-  return Geometry<VertexP>::create(vertices, indices);
 
-  /*
   for (int i=0; i<degree; ++i) {
     float a1 = 2.0f * glm::pi<float>() * static_cast<float>(i) / degree;
     for (int j=0; j<degree; ++j) {
@@ -76,18 +106,13 @@ GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
     }
   }
 
-  float angle = calcAngleFromRot(0.3333333f);
-  vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-  vertices.push_back(glm::vec3(cos(angle), sin(angle), 0.0f));
-  angle = calcAngleFromRot(0.6666666f);
-  vertices.push_back(glm::vec3(cos(angle), sin(angle), 0.0f));
-
-    {
+      {
      0, 2, 1,
      //0, 3, 1,
      //1, 3, 2,
      //0, 3, 2
   };
 
+  return Geometry<VertexPN>::create(vertices, indices);
   */
 }

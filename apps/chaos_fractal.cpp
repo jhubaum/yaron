@@ -80,11 +80,11 @@ void ChaosPointFractal::vOnRender() {
   renderContext()->useShader(_shader);
 
   glm::mat4 identity(1.0f);
-  _shader->setColor("mainColor", Color::green);
+  _shader->set<Color>("mainColor", Color::green);
   for (int i=0; i<_points.size(); ++i)
     renderContext()->renderGeometry(_geometry, glm::translate(identity, _points[i]));
 
-  _shader->setColor("mainColor", Color::blue);
+  _shader->set<Color>("mainColor", Color::blue);
   for (int i=0; i<_anchor.size(); ++i)
     renderContext()->renderGeometry(_geometry, glm::translate(identity, _anchor[i]));
 

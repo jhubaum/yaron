@@ -91,14 +91,14 @@ void MandelbrotApp::vOnRender() {
   renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
-  _shader->setColor("mainColor", Color::grey);
+  _shader->set<Color>("mainColor", Color::grey);
   _shader->drawMode(DrawMode::LineStrip);
   renderContext()->renderGeometry(_line, glm::mat4(1.0f));
   _shader->drawMode(DrawMode::Triangles);
 
 
   for(int i=0; i<_coordinates.size(); ++i) {
-    _shader->setColor("mainColor", _coordinates[i].col);
+    _shader->set<Color>("mainColor", _coordinates[i].col);
     renderContext()->renderGeometry(_geometry, _coordinates[i].worldMatrix);
   }
 
