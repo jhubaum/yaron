@@ -85,18 +85,12 @@ void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world)
   auto shader = _shader.lock();
   shader->setMVP(_camera.lock()->viewProjectionMatrix() * world);
 
-  glEnableVertexAttribArray(0);
-  // Vertices (Position)
-  glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer());
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-  // Indices
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->indexBuffer());
+  geometry->vEnableVertexAttributes();
 
   // Draw Triangles
   glDrawElements(static_cast<GLenum>(shader->drawMode()), geometry->indexCount(), GL_UNSIGNED_SHORT, (void*)0);
 
-  glDisableVertexAttribArray(0);
+  geometry->vDisableVertexAttributes();
 }
 
 bool RenderContext::exitRequest() const {

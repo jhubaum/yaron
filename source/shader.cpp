@@ -148,3 +148,12 @@ void Shader::setColor(const std::string &name, const Color &c) {
   glUniform4f(handle, c.r, c.g, c.b, c.a);
 }
 
+template<>
+void Shader::set<glm::vec3>(const std::string &name, const glm::vec3 &value) {
+  GLuint handle = glGetUniformLocation(_program, name.c_str());
+  if (-1 == handle) {
+    std::cout << "Shader: Unknown parameter name " << name << std::endl;
+    return;
+  }
+  glUniform3f(handle, value.x, value.y, value.z);
+}

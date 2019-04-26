@@ -1,16 +1,18 @@
 #include <primitives.hpp>
 
+#include <glm/gtc/constants.hpp>
+
 #include <vector>
-#include <glm/glm.hpp>
+#include <vertex.hpp>
 
 #include <iostream>
 
 GeometryPtr createCircle(uint32_t vertexCount, float radius) {
-  std::vector<glm::vec3> vertices(vertexCount);
+  std::vector<VertexP> vertices(vertexCount);
   for (int i=0; i<vertexCount; ++i) {
     float angle = 2 * glm::pi<float>() * i / vertexCount;
-    vertices[i] = glm::vec3(radius * cos(angle),
-                            radius * sin(angle), 0.0f);
+    vertices[i] = { glm::vec3(radius * cos(angle),
+                              radius * sin(angle), 0.0f) };
   }
 
   std::vector<unsigned short> indices;
@@ -20,7 +22,7 @@ GeometryPtr createCircle(uint32_t vertexCount, float radius) {
     indices.push_back(i + 1);
   }
 
-  return Geometry::create(vertices, indices);
+  return Geometry<VertexP>::create(vertices, indices);
 }
 
 float calcAngleFromRot(float rot) {
@@ -32,11 +34,36 @@ float calcAngleFromRot(int i, int size) {
 }
 
 GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
-  std::vector<glm::vec3> vertices;
-
   // Lon: vertical lines
   // Lat: horizontal lines
-  
+
+  std::vector<VertexP> vertices = { glm::vec3(0.0f, radius, 0.0f),
+                                      glm::vec3(0.0f, -radius, 0.0f) };
+
+  latCount += 1;
+  for (int i=1; i<latCount; ++i) {
+    for (int j=0; j<lonCount; ++j) {
+      float angle = 2 * glm::pi<float>() * j / lonCount;
+      auto vertex = glm::vec3(radius * cos(angle),
+                              radius - 2.0f * (static_cast<float>(i) / latCount)*radius,
+                              radius * sin(angle));
+      vertices.push_back({vertex});
+    }
+  }
+
+
+  std::vector<unsigned short> indices =
+    {
+     0, 2, 3,
+     0, 3, 4,
+     0, 4, 5,
+     1, 2, 3,
+     1, 3, 4,
+     1, 4, 5
+    };
+
+
+  return Geometry<VertexP>::create(vertices, indices);
 
   /*
   for (int i=0; i<degree; ++i) {
@@ -48,7 +75,6 @@ GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
                                    radius * cos(a1)));
     }
   }
-  */
 
   float angle = calcAngleFromRot(0.3333333f);
   vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -56,7 +82,6 @@ GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
   angle = calcAngleFromRot(0.6666666f);
   vertices.push_back(glm::vec3(cos(angle), sin(angle), 0.0f));
 
-  std::vector<unsigned short> indices =
     {
      0, 2, 1,
      //0, 3, 1,
@@ -64,5 +89,5 @@ GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
      //0, 3, 2
   };
 
-  return Geometry::create(vertices, indices);
+  */
 }

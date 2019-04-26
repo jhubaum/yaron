@@ -13,6 +13,23 @@
 
 #include <controls.hpp>
 
+struct Object {
+  GeometryPtr geometry;
+  Transform transform;
+
+  Object(GeometryPtr geometry, Transform transform)
+    : geometry(nullptr), transform(transform)
+  {}
+
+  Object(GeometryPtr geometry)
+    : Object(geometry, Transform())
+  {}
+
+  Object()
+    : Object(nullptr, Transform())
+  {}
+};
+
 class FlowerApp : public App {
 public:
   FlowerApp(uint32_t seedCount, float radius)
@@ -44,8 +61,8 @@ App *allocateApplication() {
 
 bool FlowerApp::vOnInit(char *argv[], int argc) {
   _shader = ShaderBuilder()
-    .addVertexShader("resources/simple.vertexshader")
-    .addFragmentShader("resources/simple.fragmentshader")
+    .addVertexShader("resources/light.vertexshader")
+    .addFragmentShader("resources/light.fragmentshader")
     .build();
 
   glEnable(GL_DEPTH_TEST);
@@ -84,6 +101,7 @@ void FlowerApp::vOnRender() {
   renderContext()->useShader(_shader);
 
   _shader->setColor("mainColor", Color::purple);
+  _shader->set<glm::vec3>("cameraPos", _camera->transform().position);
 
   static auto sphere = createSphere(4, 1);
   renderContext()->renderGeometry(sphere, glm::mat4(1.0f));

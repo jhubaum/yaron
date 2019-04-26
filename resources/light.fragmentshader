@@ -1,0 +1,21 @@
+#version 330 core
+
+const vec3 lightPos = vec3(3.0,3.0,3.0);
+const vec3 ambient = vec3(0.2, 0.0, 0.0);
+
+// Ouput data
+out vec3 color;
+
+varying vec3 vertexPos;
+
+uniform vec4 mainColor;
+uniform vec3 cameraPos;
+
+void main()
+{
+  vec3 viewDir = cameraPos - vertexPos;
+  vec3 lightDir = lightPos - vertexPos;
+  normalize(viewDir);
+  normalize(lightDir);
+	color = ambient + max(0.0f, dot(viewDir, lightDir))*mainColor.rgb;
+}

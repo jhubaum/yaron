@@ -9,6 +9,8 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <vertex.hpp>
+
 #include <complex.hpp>
 
 #include <iostream>
@@ -51,7 +53,7 @@ private:
   GeometryPtr _geometry;
   std::vector<IterationStep> _coordinates;
   ShaderPtr _shader;
-  Object _line;
+  GeometryPtr _line;
 
   std::shared_ptr<OrthographicCamera> _camera;
 
@@ -91,7 +93,7 @@ void MandelbrotApp::vOnRender() {
 
   _shader->setColor("mainColor", Color::grey);
   _shader->drawMode(DrawMode::LineStrip);
-  renderContext()->renderGeometry(_line.geometry, glm::mat4(1.0f));
+  renderContext()->renderGeometry(_line, glm::mat4(1.0f));
   _shader->drawMode(DrawMode::Triangles);
 
 
@@ -106,13 +108,13 @@ void MandelbrotApp::vOnRender() {
 void MandelbrotApp::initIterations(const ComplexNumber &constant) {
   _coordinates.clear();
 
-  std::vector<glm::vec3> _linePoints;
+  std::vector<VertexP> _linePoints;
   std::vector<unsigned short> _lineIndices;
 
   auto c = constant;
   for(int i=0; i<_maxIterations; ++i) {
     auto pos = glm::vec3(c.re, c.im, 0.0f);
-    _linePoints.push_back(pos);
+    _linePoints.push_back({pos});
     _lineIndices.push_back(static_cast<unsigned short>(i));
     bool stable = isStable(c);
     _coordinates.push_back(IterationStep(pos, stable));
@@ -122,5 +124,5 @@ void MandelbrotApp::initIterations(const ComplexNumber &constant) {
 
     c = c * c + constant;
   }
-  _line = Object(Geometry::create(_linePoints, _lineIndices), Transform());
+  _line = Geometry<VertexP>::create(_linePoints, _lineIndices);
 }

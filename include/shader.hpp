@@ -53,6 +53,9 @@ public:
 
   void setColor(const std::string &name, const Color &c);
 
+  template<typename T>
+  void set(const std::string &name, const T&);
+
 private:
   Shader();
   bool init(GLuint);
