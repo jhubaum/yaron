@@ -46,12 +46,11 @@ public:
   ~Shader();
 
   void setActive();
-  void setMVP(const glm::mat4 &value);
+  void setViewProjection(const glm::mat4 &value);
+  void setWorld(const glm::mat4 &value);
 
   void drawMode(DrawMode value) { _drawMode = value; }
   DrawMode drawMode() const { return _drawMode; }
-
-  void setColor(const std::string &name, const Color &c);
 
   template<typename T>
   void set(const std::string &name, const T&);
@@ -61,6 +60,7 @@ private:
   bool init(GLuint);
 
   GLuint _program;
-  GLuint _mvpHandle;
+  GLuint _vpHandle;
+  GLuint _worldHandle;
   DrawMode _drawMode;
 };

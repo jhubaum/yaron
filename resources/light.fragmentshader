@@ -1,23 +1,46 @@
 #version 330 core
 
+// Light Properties
 const vec3 lightPos = vec3(3.0,3.0,3.0);
-const vec3 ambient = vec3(0.2, 0.0, 0.0);
+const vec3 lightColor = vec3(1.0, 1.0, 1.0);
+const float lightStrength = 40.0;
+const vec3 ambientColor = vec3(0.1, 0.0, 0.0);
+const vec3 specularColor = vec3(1.0, 1.0, 1.0);
+const float shininess = 16.0;
+//const float screenGamma = 2.2; // Assume the monitor is calibrated to the sRGB color space
 
-// Ouput data
+
+uniform vec4 diffuseColor;
+
+// Output data
 out vec3 color;
 
-varying vec3 vertexPos;
-varying vec3 normal;
+varying vec3 vertexPos_var;
+varying vec3 normal_var;
 
-uniform vec4 mainColor;
 uniform vec3 cameraPos;
 
 void main()
 {
-  vec3 viewDir = cameraPos - vertexPos;
-  vec3 lightDir = lightPos - vertexPos;
-  normalize(viewDir);
-  normalize(lightDir);
-	//color = max(0.0f, dot(normal, lightDir))*mainColor.rgb;
-  color = mainColor.rgb;
+  vec3 normal = normalize(normal_var);
+  vec3 lightDir = lightPos - vertexPos_var;
+  float distance = length(lightDir);
+  lightDir = normalize(lightDir);
+
+  float lambert = max(dot(lightDir, normal), 0.0);
+  float specular = 0.0f;
+
+  if (lambert > 0.0) {
+    vec3 viewDir = normalize(cameraPos - vertexPos_var);
+    vec3 halfDir = normalize(lightDir + viewDir);
+    specular = pow(max(dot(halfDir, normal), 0.0), shininess);
+  }
+  vec3 baseColor = lightColor * lightStrength / (distance*distance);
+  color = ambientColor +
+          lambert * diffuseColor.rbg * baseColor +
+          specular * specularColor * baseColor;
+ 
+  // apply gamma correction (assume ambientColor, diffuseColor and specColor
+  // have been linearized, i.e. have no gamma correction in them)
+  // color = pow(color, vec3(1.0/screenGamma));
 }

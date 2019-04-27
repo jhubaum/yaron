@@ -108,7 +108,8 @@ ShaderPtr ShaderBuilder::build() {
 }
 
 Shader::Shader()
-  : _program(-1), _mvpHandle(-1), _drawMode(DrawMode::Triangles)
+  : _program(-1), _vpHandle(-1), _worldHandle(-1),
+    _drawMode(DrawMode::Triangles)
 {}
 
 Shader::~Shader()
@@ -121,10 +122,11 @@ bool Shader::init(GLuint program) {
   if (0 == _program)
     return false;
 
-  _mvpHandle = glGetUniformLocation(_program, "MVP");
+  _vpHandle = glGetUniformLocation(_program, "viewProjectionMatrix");
+  _worldHandle = glGetUniformLocation(_program, "worldMatrix");
 
-  if(-1 == _mvpHandle) {
-    std::cout << "Shader: No mvp handle available." << std::endl;
+  if(-1 == _vpHandle || -1 == _worldHandle) {
+    std::cout << "Shader: Not all transformation matrices are available." << std::endl;
     return false;
   }
   return true;
@@ -134,9 +136,14 @@ void Shader::setActive() {
   glUseProgram(_program);
 }
 
-void Shader::setMVP(const glm::mat4 &value)
+void Shader::setViewProjection(const glm::mat4 &value)
 {
-  glUniformMatrix4fv(_mvpHandle, 1, GL_FALSE, &value[0][0]);
+  glUniformMatrix4fv(_vpHandle, 1, GL_FALSE, &value[0][0]);
+}
+
+void Shader::setWorld(const glm::mat4 &value)
+{
+  glUniformMatrix4fv(_worldHandle, 1, GL_FALSE, &value[0][0]);
 }
 
 bool safeGetHandle(GLuint program, const std::string &name, GLuint *oH) {

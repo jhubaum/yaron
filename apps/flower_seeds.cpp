@@ -100,7 +100,7 @@ void FlowerApp::vOnRender() {
   renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
-  _shader->set<Color>("mainColor", Color::purple);
+  _shader->set<Color>("diffuseColor", Color(0.5f, 0.0f, 0.0f));
   _shader->set<glm::vec3>("cameraPos", _camera->transform().position);
 
   static auto sphere = createSphere(4, 1);
