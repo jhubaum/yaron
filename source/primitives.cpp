@@ -17,6 +17,11 @@ void addNormals(std::vector<VertexPN> &vertices, unsigned short a, unsigned shor
   vertices[c].normal = normal;
 }
 
+void addNormals(std::vector<VertexPN> &vertices, const std::vector<unsigned short> &indices) {
+  for(int i=0; i<indices.size()/3; ++i)
+    addNormals(vertices, indices[i], indices[i+1], indices[i+2]);
+}
+
 GeometryPtr createCircle(uint32_t vertexCount, float radius) {
   std::vector<VertexP> vertices(vertexCount);
   for (int i=0; i<vertexCount; ++i) {
@@ -58,9 +63,8 @@ GeometryPtr createTriangle() {
 GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
   // Lon: vertical lines
   // Lat: horizontal lines
-  return createTriangle();
+  //return createTriangle();
 
-  /*
 
   std::vector<VertexPN> vertices(2);
   vertices[0].pos = glm::vec3(0.0f, radius, 0.0f);
@@ -84,18 +88,19 @@ GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
 
   std::vector<unsigned short> indices =
     {
-     0, 2, 3,
-     0, 3, 4,
-     0, 4, 5,
-     1, 2, 3,
-     1, 3, 4,
-     1, 4, 5
+     0, 3, 2,
+     0, 4, 3,
+     0, 5, 4,
+     1, 3, 2,
+     1, 4, 3,
+     1, 5, 4
     };
 
-  for(int i=0; i<indices.size()/3; ++i)
-    addNormals(vertices, indices[i], indices[i+1], indices[i+2]);
+  addNormals(vertices, indices);
 
+  return Geometry<VertexPN>::create(vertices, indices);
 
+  /*
   for (int i=0; i<degree; ++i) {
     float a1 = 2.0f * glm::pi<float>() * static_cast<float>(i) / degree;
     for (int j=0; j<degree; ++j) {
@@ -113,6 +118,53 @@ GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
      //0, 3, 2
   };
 
-  return Geometry<VertexPN>::create(vertices, indices);
   */
+}
+
+GeometryPtr createCube() {
+  std::vector<VertexPN> vertices = {
+    glm::vec3(-0.5f,-0.5f, 0.5f),
+    glm::vec3( 0.5f,-0.5f, 0.5f),
+    glm::vec3( 0.5f,-0.5f,-0.5f),
+    glm::vec3(-0.5f,-0.5f,-0.5f),
+
+    glm::vec3(-0.5f,-0.5f,-0.5f),
+    glm::vec3( 0.5f,-0.5f,-0.5f),
+    glm::vec3( 0.5f, 0.5f,-0.5f),
+    glm::vec3(-0.5f, 0.5f,-0.5f),
+
+    glm::vec3(-0.5f,-0.5f,-0.5f),
+    glm::vec3(-0.5f, 0.5f,-0.5f),
+    glm::vec3(-0.5f, 0.5f, 0.5f),
+    glm::vec3(-0.5f,-0.5f, 0.5f),
+
+    glm::vec3(-0.5f, 0.5f,-0.5f),
+    glm::vec3( 0.5f, 0.5f,-0.5f),
+    glm::vec3( 0.5f, 0.5f, 0.5f),
+    glm::vec3(-0.5f, 0.5f, 0.5f),
+
+    glm::vec3(-0.5f, 0.5f, 0.5f),
+    glm::vec3( 0.5f, 0.5f, 0.5f),
+    glm::vec3( 0.5f,-0.5f, 0.5f),
+    glm::vec3(-0.5f,-0.5f, 0.5f),
+
+    glm::vec3( 0.5f,-0.5f, 0.5f),
+    glm::vec3( 0.5f, 0.5f, 0.5f),
+    glm::vec3( 0.5f, 0.5f,-0.5f),
+    glm::vec3( 0.5f,-0.5f,-0.5f),
+  };
+
+  std::vector<unsigned short> indices;
+  for(int i=0; i<6; ++i) {
+    indices.push_back(4*i);
+    indices.push_back(4*i + 2);
+    indices.push_back(4*i + 1);
+    indices.push_back(4*i);
+    indices.push_back(4*i + 3);
+    indices.push_back(4*i + 2);
+  }
+
+  addNormals(vertices, indices);
+
+  return Geometry<VertexPN>::create(vertices, indices);
 }
