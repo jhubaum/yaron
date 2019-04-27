@@ -65,5 +65,5 @@ void Controller::update(float dt) {
                            _yAxisRot * glm::pi<float>() * 2.0f,
                            0.0f});
 
-  t->position += pos;
+  t->position += glm::mat3_cast(t->rotation) * pos;
 }

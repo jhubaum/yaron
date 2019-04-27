@@ -49,6 +49,7 @@ private:
 
   ShaderPtr _shader;
   std::shared_ptr<PerspectiveCamera> _camera;
+  std::shared_ptr<Transform> _transform;
 
   std::vector<Object> _seeds;
   float _radius;
@@ -73,9 +74,9 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
   glCullFace(GL_BACK);
 
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
-
   _camera->transform().lock()->position.z = -5.0f;
 
+  _transform = std::make_shared<Transform>();
   _controller = Controller(_camera->transform(),
                            renderContext()->window());
 
@@ -106,7 +107,7 @@ void FlowerApp::vOnRender() {
   _shader->set<glm::vec3>("cameraPos", _camera->transform().lock()->position);
 
   static auto geo = createCube();
-  renderContext()->renderGeometry(geo, glm::mat4(1.0f));
+  renderContext()->renderGeometry(geo, _transform->calculateWorld());
   renderContext()->endFrame();
   return;
 
