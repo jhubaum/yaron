@@ -83,7 +83,8 @@ void RenderContext::renderGeometry(GeometryPtr geometry, const glm::mat4 &world)
     std::cout << "RenderContext: Shader is expired" << std::endl;
 
   auto shader = _shader.lock();
-  shader->setViewProjection(_camera.lock()->viewProjectionMatrix());
+  shader->set<glm::mat4>("viewMatrix", _camera.lock()->viewMatrix());
+  shader->set<glm::mat4>("projectionMatrix", _camera.lock()->projectionMatrix());
   shader->setWorld(world);
 
   geometry->vEnableVertexAttributes();

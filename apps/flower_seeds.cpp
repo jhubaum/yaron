@@ -77,7 +77,7 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
   _camera->transform().lock()->position.z = -5.0f;
 
   _transform = std::make_shared<Transform>();
-  _controller = Controller(_camera->transform(),
+  _controller = Controller(_transform,
                            renderContext()->window());
 
   auto circleGeometry = createCircle(8, _radius);

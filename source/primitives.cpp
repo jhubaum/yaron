@@ -11,15 +11,14 @@ void addNormals(std::vector<VertexPN> &vertices, unsigned short a, unsigned shor
   glm::vec3 normal = glm::cross(vertices[c].pos - vertices[a].pos,
                                 vertices[b].pos - vertices[a].pos);
   normal = glm::normalize(normal);
-
   vertices[a].normal = normal;
   vertices[b].normal = normal;
   vertices[c].normal = normal;
 }
 
 void addNormals(std::vector<VertexPN> &vertices, const std::vector<unsigned short> &indices) {
-  for(int i=0; i<indices.size()/3; ++i)
-    addNormals(vertices, indices[i], indices[i+1], indices[i+2]);
+for(int i=0; i<indices.size()/3; ++i)
+  addNormals(vertices, indices[3*i], indices[3*i+1], indices[3*i+2]);
 }
 
 GeometryPtr createCircle(uint32_t vertexCount, float radius) {
@@ -163,7 +162,6 @@ GeometryPtr createCube() {
     indices.push_back(4*i + 3);
     indices.push_back(4*i + 2);
   }
-
   addNormals(vertices, indices);
 
   return Geometry<VertexPN>::create(vertices, indices);

@@ -9,13 +9,11 @@ Camera::Camera(float near, float far)
 Camera::~Camera()
 {}
 
-glm::mat4 Camera::viewProjectionMatrix() const {
+glm::mat4 Camera::viewMatrix() const {
   auto rot = glm::mat3_cast(_transform->rotation);
-
-  return projectionMatrix() *
-    glm::lookAt(_transform->position,
-                _transform->position + rot * glm::vec3(0.0f, 0.0f, 1.0f),
-                rot * glm::vec3(0.0f, 1.0f, 0.0f));
+  return glm::lookAt(_transform->position,
+                     _transform->position + rot * glm::vec3(0.0f, 0.0f, 1.0f),
+                     rot * glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 float Camera::near() const { return _near; }

@@ -10,7 +10,8 @@ public:
   Camera(float near, float far);
   virtual ~Camera() = 0;
 
-  glm::mat4 viewProjectionMatrix() const;
+  glm::mat4 viewMatrix() const;
+  virtual glm::mat4 projectionMatrix() const = 0;
 
   float near() const;
   float far() const;
@@ -19,10 +20,6 @@ public:
   void far(float value);
 
   std::weak_ptr<Transform> transform();
-
-protected:
-  virtual glm::mat4 projectionMatrix() const = 0;
-
 private:
   float _near;
   float _far;
@@ -40,7 +37,6 @@ public:
   void fov(float value);
   void aspect(float value);
 
-protected:
   glm::mat4 projectionMatrix() const final override;
 
 private:
@@ -62,7 +58,6 @@ public:
   void bottom(float value);
   void top(float value);
 
-protected:
   glm::mat4 projectionMatrix() const final override;
 
 private:

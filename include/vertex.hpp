@@ -19,11 +19,11 @@ struct VertexP {
 
 struct VertexPN {
   VertexPN()
-    : pos(0.0f, 0.0f, 0.0f), normal(1.0f, 0.0f, 0.0f)
+    : pos(0.0f, 0.0f, 0.0f), normal(0.0f, 0.0f, 0.0f)
   {}
 
   VertexPN(const glm::vec3 &pos)
-    : pos(pos), normal(1.0f, 0.0f, 0.0f)
+    : pos(pos), normal(0.0f, 0.0f, 0.0f)
   {}
 
   VertexPN(const glm::vec3 &pos, const glm::vec3 &normal)

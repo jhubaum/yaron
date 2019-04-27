@@ -27,7 +27,7 @@ void enableVertexAttributes<VertexPN>(GLuint vertexBuffer, GLuint indexBuffer) {
   // Position
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPN), (void*)0);
   // Normal
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPN), (void*)3);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPN), (GLvoid*)(3*sizeof(GL_FLOAT)));
 
   // Indices
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);

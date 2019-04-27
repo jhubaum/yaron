@@ -122,10 +122,9 @@ bool Shader::init(GLuint program) {
   if (0 == _program)
     return false;
 
-  _vpHandle = glGetUniformLocation(_program, "viewProjectionMatrix");
   _worldHandle = glGetUniformLocation(_program, "worldMatrix");
 
-  if(-1 == _vpHandle || -1 == _worldHandle) {
+  if(-1 == _worldHandle) {
     std::cout << "Shader: Not all transformation matrices are available." << std::endl;
     return false;
   }
@@ -168,3 +167,11 @@ void Shader::set<glm::vec3>(const std::string &name, const glm::vec3 &value) {
   if (safeGetHandle(_program, name, &handle))
       glUniform3f(handle, value.x, value.y, value.z);
 }
+
+template<>
+void Shader::set<glm::mat4>(const std::string &name, const glm::mat4 &value) {
+  GLuint handle;
+  if (safeGetHandle(_program, name, &handle))
+    glUniformMatrix4fv(handle, 1, GL_FALSE, &value[0][0]);
+}
+
