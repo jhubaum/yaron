@@ -3,18 +3,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(float near, float far)
-  : _near(near), _far(far), _transform(Transform())
+  : _near(near), _far(far), _transform(std::make_shared<Transform>())
 {}
 
 Camera::~Camera()
 {}
 
 glm::mat4 Camera::viewProjectionMatrix() const {
-  auto rot = glm::mat3_cast(_transform.rotation);
+  auto rot = glm::mat3_cast(_transform->rotation);
 
   return projectionMatrix() *
-    glm::lookAt(_transform.position,
-                _transform.position + rot * glm::vec3(0.0f, 0.0f, 1.0f),
+    glm::lookAt(_transform->position,
+                _transform->position + rot * glm::vec3(0.0f, 0.0f, 1.0f),
                 rot * glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
@@ -24,7 +24,7 @@ float Camera::far() const { return _far; }
 void Camera::near(float value) { _near = value; }
 void Camera::far(float value) { _far = value; }
 
-Transform& Camera::transform() { return _transform; }
+std::weak_ptr<Transform> Camera::transform() { return _transform; }
 
 
 PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float near, float far)

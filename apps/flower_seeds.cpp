@@ -49,6 +49,7 @@ private:
 
   ShaderPtr _shader;
   std::shared_ptr<PerspectiveCamera> _camera;
+
   std::vector<Object> _seeds;
   float _radius;
   float _currentRotation;
@@ -73,9 +74,10 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
 
-  _camera->transform().position.z = -5.0f;
+  _camera->transform().lock()->position.z = -5.0f;
 
-  _controller = Controller(_camera, renderContext()->window());
+  _controller = Controller(_camera->transform(),
+                           renderContext()->window());
 
   auto circleGeometry = createCircle(8, _radius);
 
@@ -101,10 +103,10 @@ void FlowerApp::vOnRender() {
   renderContext()->useShader(_shader);
 
   _shader->set<Color>("diffuseColor", Color(0.5f, 0.0f, 0.0f));
-  _shader->set<glm::vec3>("cameraPos", _camera->transform().position);
+  _shader->set<glm::vec3>("cameraPos", _camera->transform().lock()->position);
 
-  static auto sphere = createSphere(4, 1);
-  renderContext()->renderGeometry(sphere, glm::mat4(1.0f));
+  static auto geo = createCube();
+  renderContext()->renderGeometry(geo, glm::mat4(1.0f));
   renderContext()->endFrame();
   return;
 

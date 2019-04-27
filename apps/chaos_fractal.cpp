@@ -57,7 +57,7 @@ bool ChaosPointFractal::vOnInit(char *argv[], int argc) {
     .build();
 
   _camera = std::make_shared<OrthographicCamera>(-1.2f, 1.2f, -1.2f, 1.2f);
-  _camera->transform().position.z = -5.0f;
+  _camera->transform().lock()->position.z = -5.0f;
   _geometry = createCircle(12, 0.002f);
 
   for (int i=0; i<_anchor.size(); ++i) {

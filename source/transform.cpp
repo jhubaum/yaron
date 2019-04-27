@@ -20,8 +20,7 @@ Transform::Transform(const glm::vec3 &position, const glm::quat &rotation, const
 glm::mat4 Transform::calculateWorld() const {
   glm::mat4 world(1.0f);
   world = glm::scale(world, scale);
-  world *= glm::mat4_cast(rotation);//glm::rotate(world, rotation);
+  world *= glm::mat4_cast(rotation);
   world = glm::translate(world, position);
-
   return world;
 }

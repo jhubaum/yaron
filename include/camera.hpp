@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <transform.hpp>
 
+#include <memory>
+
 class Camera {
 public:
   Camera(float near, float far);
@@ -16,7 +18,7 @@ public:
   void near(float value);
   void far(float value);
 
-  Transform& transform();
+  std::weak_ptr<Transform> transform();
 
 protected:
   virtual glm::mat4 projectionMatrix() const = 0;
@@ -25,7 +27,7 @@ private:
   float _near;
   float _far;
 
-  Transform _transform;
+  std::shared_ptr<Transform> _transform;
 };
 
 class PerspectiveCamera : public Camera {

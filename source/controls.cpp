@@ -3,8 +3,8 @@
 Controller::Controller()
 {}
 
-Controller::Controller(std::weak_ptr<PerspectiveCamera> camera, GLFWwindow *window)
-  : _camera(camera), _window(window), _xAxisRot(0.0f),
+Controller::Controller(std::weak_ptr<Transform> transform, GLFWwindow *window)
+  : _transform(transform), _window(window), _xAxisRot(0.0f),
     _yAxisRot(0.0f)
 {}
 
@@ -21,8 +21,10 @@ float clampRotation(float rot) {
 }
 
 void Controller::update(float dt) {
-  if (_camera.expired())
+  if (_transform.expired())
     return;
+
+  auto t = _transform.lock();
 
   if (getKey(_window, GLFW_KEY_LEFT_SHIFT))
     dt *= 2.0f;
@@ -58,11 +60,10 @@ void Controller::update(float dt) {
   _yAxisRot = clampRotation(_yAxisRot);
 
 
-  Transform &t = _camera.lock()->transform();
 
-  t.rotation = glm::quat({_xAxisRot * glm::pi<float>() * 2.0f,
-                          _yAxisRot * glm::pi<float>() * 2.0f,
-                          0.0f});
+  t->rotation = glm::quat({_xAxisRot * glm::pi<float>() * 2.0f,
+                           _yAxisRot * glm::pi<float>() * 2.0f,
+                           0.0f});
 
-  t.position += glm::mat3_cast(t.rotation) * pos;
+  t->position += pos;
 }

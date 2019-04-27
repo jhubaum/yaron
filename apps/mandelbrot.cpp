@@ -71,7 +71,7 @@ bool MandelbrotApp::vOnInit(char *argv[], int argc) {
     .build();
 
   _camera = std::make_shared<OrthographicCamera>(-4.0f, 2.0f, -1.6f, 1.6f);
-  _camera->transform().position.z = -5.0f;
+  _camera->transform().lock()->position.z = -5.0f;
 
   _input = InputManager(renderContext()->window());
   _geometry = createCircle(8, 0.02f);

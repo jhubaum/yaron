@@ -8,11 +8,11 @@
 class Controller {
 public:
   Controller();
-  Controller(std::weak_ptr<PerspectiveCamera> camera, GLFWwindow *window);
+  Controller(std::weak_ptr<Transform> transform, GLFWwindow *window);
   void update(float dt);
 
 private:
-  std::weak_ptr<PerspectiveCamera> _camera;
+  std::weak_ptr<Transform> _transform;
   GLFWwindow *_window;
 
   float _xAxisRot;
