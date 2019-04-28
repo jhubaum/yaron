@@ -4,6 +4,8 @@
 #include <primitives.hpp>
 #include <transform.hpp>
 
+#include <light.hpp>
+
 
 #include <iostream>
 
@@ -34,7 +36,7 @@ class FlowerApp : public App {
 public:
   FlowerApp(uint32_t seedCount, float radius)
     : _camera(nullptr), _seeds(seedCount), _radius(radius),
-      _currentRotation(0.0f)
+      _currentRotation(0.0f), _light(Color::white)
   { }
 
 protected:
@@ -55,6 +57,8 @@ private:
   float _radius;
   float _currentRotation;
   Controller _controller;
+
+  PointLight _light;
 };
 
 App *allocateApplication() {
@@ -75,6 +79,7 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
   _camera->transform().lock()->position.z = -5.0f;
+  _light.transform->position.z = -5.0f;
 
   _transform = std::make_shared<Transform>();
   _controller = Controller(_transform,
@@ -105,6 +110,7 @@ void FlowerApp::vOnRender() {
 
   _shader->set<Color>("diffuseColor", Color(0.5f, 0.0f, 0.0f));
   _shader->set<glm::vec3>("cameraPos", _camera->transform().lock()->position);
+  _shader->set("light", _light);
 
   static auto geo = createCube();
   renderContext()->renderGeometry(geo, _transform->calculateWorld());

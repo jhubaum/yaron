@@ -154,11 +154,19 @@ bool safeGetHandle(GLuint program, const std::string &name, GLuint *oH) {
   return true;
 }
 
+
+template<>
+void Shader::set<float>(const std::string &name, const float &value) {
+  GLuint handle;
+  if (safeGetHandle(_program, name, &handle))
+    glUniform1f(handle, value);
+}
+
 template<>
 void Shader::set<Color>(const std::string &name, const Color &value) {
   GLuint handle;
   if (safeGetHandle(_program, name, &handle))
-      glUniform4f(handle, value.r, value.g, value.b, value.a);
+      glUniform3f(handle, value.r, value.g, value.b);
 }
 
 template<>
