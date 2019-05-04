@@ -15,23 +15,6 @@
 
 #include <controls.hpp>
 
-struct Object {
-  GeometryPtr geometry;
-  Transform transform;
-
-  Object(GeometryPtr geometry, Transform transform)
-    : geometry(nullptr), transform(transform)
-  {}
-
-  Object(GeometryPtr geometry)
-    : Object(geometry, Transform())
-  {}
-
-  Object()
-    : Object(nullptr, Transform())
-  {}
-};
-
 class FlowerApp : public App {
 public:
   FlowerApp(uint32_t seedCount, float radius)
@@ -51,9 +34,9 @@ private:
 
   ShaderPtr _shader;
   std::shared_ptr<PerspectiveCamera> _camera;
-  std::shared_ptr<Transform> _transform;
 
-  std::vector<Object> _seeds;
+  std::vector<glm::vec3> _seeds;
+  GeometryPtr _geometry;
   float _radius;
   float _currentRotation;
   Controller _controller;
@@ -77,26 +60,27 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
+  //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
   renderContext()->clearColor(Color::green);
 
-  _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
-  auto t = _camera->transform().lock();
-  t->position = glm::vec3(-5.0f, 5.0f, -5.0f);
-  t->rotation = glm::quatLookAt(glm::normalize(t->position),
-                                glm::vec3(0.0f, 1.0f, 0.0f));
-
+  // Initialize light
   _light.transform->position = glm::vec3(-5.0f, 2.0f, 5.0f);
-
-  _transform = std::make_shared<Transform>();
-  _controller = Controller(_transform,
-                           renderContext()->window());
-
   _light.transform->scale *= 0.1f;
 
-  auto geometry = createCircle(8, _radius);
+  // Initialize Camera and controller
+  _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
+  auto t = _camera->transform().lock();
+  t->position = glm::vec3(0.0f, 0.0f, -5.0f);//glm::vec3(-5.0f, 5.0f, -5.0f);
+  //t->rotation = glm::quatLookAt(glm::normalize(t->position),
+  //                              glm::vec3(0.0f, 1.0f, 0.0f));
 
-  for(int i=0; i<_seeds.size(); ++i)
-    _seeds[i].geometry = geometry;
+  _controller = Controller(_camera->transform(),
+                           renderContext()->window());
+
+  _geometry = createSphere(8, 8, _radius);
+
+  updateRotation(0.25f);
 
   return true;
 }
@@ -106,8 +90,8 @@ void FlowerApp::vOnDeinit() {
 }
 
 void FlowerApp::vOnUpdate(float dt) {
-  _currentRotation += 0.01f * dt;
-  updateRotation(_currentRotation);
+  //_currentRotation += 0.001f * dt;
+  //updateRotation(_currentRotation);
 
   _controller.update(dt);
 }
@@ -120,14 +104,10 @@ void FlowerApp::vOnRender() {
   _shader->set<glm::vec3>("cameraPos", _camera->transform().lock()->position);
   _shader->set("light", _light);
 
-  static auto geo = createSphere();
-  renderContext()->renderGeometry(geo, _transform->calculateWorld());
-
-  renderContext()->endFrame();
-  return;
-
-  for(int i=0; i<_seeds.size(); ++i)
-    renderContext()->renderGeometry(_seeds[i].geometry, _seeds[i].transform);
+  for(int i=0; i<_seeds.size(); ++i) {
+    auto world = glm::translate(glm::mat4(1.0f), _seeds[i]);
+    renderContext()->renderGeometry(_geometry, world);
+  }
 
   renderContext()->endFrame();
 }
@@ -136,7 +116,7 @@ void FlowerApp::updateRotation(float value) {
   float angle = value * 2.0f * glm::pi<float>();
   for(int i=0; i<_seeds.size(); ++i) {
     float rad = 0.5f * i * _radius;
-    _seeds[i].transform.position.x = rad * glm::cos(angle*i);
-    _seeds[i].transform.position.y = rad * glm::sin(angle*i);
+    _seeds[i].x = rad * glm::cos(angle*i);
+    _seeds[i].y = rad * glm::sin(angle*i);
   }
 }
