@@ -81,11 +81,11 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
   auto t = _camera->transform().lock();
-  t->position.z = -5.0f;
-  t->position.x = -5.0f;
-  t->position.y =  5.0f;
-  t->rotation = glm::quatLookAt(glm::normalize(t->position), glm::vec3(0.0f, 1.0f, 0.0f));
-  _light.transform->position = glm::vec3(5.0f, 5.0f, 0.0f);
+  t->position = glm::vec3(-5.0f, 5.0f, -5.0f);
+  t->rotation = glm::quatLookAt(glm::normalize(t->position),
+                                glm::vec3(0.0f, 1.0f, 0.0f));
+
+  _light.transform->position = glm::vec3(-5.0f, 2.0f, 5.0f);
 
   _transform = std::make_shared<Transform>();
   _controller = Controller(_transform,
@@ -93,10 +93,10 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 
   _light.transform->scale *= 0.1f;
 
-  auto circleGeometry = createCircle(8, _radius);
+  auto geometry = createCircle(8, _radius);
 
   for(int i=0; i<_seeds.size(); ++i)
-    _seeds[i].geometry = circleGeometry;
+    _seeds[i].geometry = geometry;
 
   return true;
 }
@@ -120,7 +120,7 @@ void FlowerApp::vOnRender() {
   _shader->set<glm::vec3>("cameraPos", _camera->transform().lock()->position);
   _shader->set("light", _light);
 
-  static auto geo = createCube();
+  static auto geo = createSphere();
   renderContext()->renderGeometry(geo, _transform->calculateWorld());
 
   renderContext()->endFrame();

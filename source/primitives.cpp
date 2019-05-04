@@ -60,65 +60,60 @@ GeometryPtr createTriangle() {
 };
 
 GeometryPtr createSphere(uint32_t lonCount, uint32_t latCount, float radius) {
-  // Lon: vertical lines
-  // Lat: horizontal lines
-  //return createTriangle();
+  std::vector<VertexPN> vertices;
+  std::vector<unsigned short> indices;
 
+  // Add top vertices
+  for (int i=0; i<lonCount; ++i) {
+    vertices.push_back(glm::vec3(0.0f, radius, 0.0f));
+  }
 
-  std::vector<VertexPN> vertices(2);
-  vertices[0].pos = glm::vec3(0.0f, radius, 0.0f);
-  vertices[0].pos = glm::vec3(0.0f, -radius, 0.0f);
+  // Add vertical lines
+  for (int i=0; i<latCount; ++i) {
+    float theta = glm::pi<float>() *
+      static_cast<float>(i+1) / (latCount+1);
+    for (int j=0; j<lonCount; ++j) {
+      float phi = 2 * glm::pi<float>() * j / lonCount;
+      vertices.push_back(glm::vec3(radius * sin(theta) * cos(phi),
+                                   radius * cos(theta),
+                                   radius * sin(theta) * sin(phi)));
+    }
+  }
 
-  latCount += 1;
+  // Add bottom vertices
+  for(int i=0; i<lonCount; ++i) {
+    vertices.push_back(glm::vec3(0.0f, -radius, 0.0f));
+  }
+
+  // Add indices connecting the bottom and the top vertices with horizontal lines
+  int bottomVertexStart = vertices.size() - lonCount;
+  for (int i=0; i<lonCount; ++i) {
+    indices.push_back(i);
+    indices.push_back(lonCount + (i + 1) % lonCount);
+    indices.push_back(lonCount + i);
+
+    indices.push_back(bottomVertexStart + i);
+    indices.push_back(bottomVertexStart - lonCount + i);
+    indices.push_back(bottomVertexStart - lonCount + (i + 1) % lonCount);
+  }
+
+  // Add indices between vertical lines
   for (int i=1; i<latCount; ++i) {
     for (int j=0; j<lonCount; ++j) {
-      float angle = 2 * glm::pi<float>() * j / lonCount;
-      VertexPN vertex;
-      vertex.pos = glm::vec3(radius * cos(angle),
-                             radius - 2.0f * (static_cast<float>(i) / latCount)*radius,
-                             radius * sin(angle));
-      vertices.push_back(vertex);
+      indices.push_back(lonCount * i + j);
+      indices.push_back(lonCount * i + (j + 1) % lonCount);
+      indices.push_back(lonCount * (i+1) + j);
+
+      indices.push_back(lonCount * i + (j+1) % lonCount);
+      indices.push_back(lonCount * (i+1) + (j + 1) % lonCount);
+      indices.push_back(lonCount * (i+1) + j);
     }
   }
-
-  //vertices[0].normal = glm::vec3(0.0f, radius, 0.0f);
-  //vertices[0].normal = glm::vec3(0.0f, -radius, 0.0f);
-
-
-  std::vector<unsigned short> indices =
-    {
-     0, 3, 2,
-     0, 4, 3,
-     0, 5, 4,
-     1, 3, 2,
-     1, 4, 3,
-     1, 5, 4
-    };
 
   addNormals(vertices, indices);
-
   return Geometry<VertexPN>::create(vertices, indices);
-
-  /*
-  for (int i=0; i<degree; ++i) {
-    float a1 = 2.0f * glm::pi<float>() * static_cast<float>(i) / degree;
-    for (int j=0; j<degree; ++j) {
-      float a2 = 2.0f * glm::pi<float>() * static_cast<float>(j) / degree;
-      vertices.push_back(glm::vec3(radius * sin(a1) * cos(a2),
-                                   radius * sin(a1) * cos(a2),
-                                   radius * cos(a1)));
-    }
-  }
-
-      {
-     0, 2, 1,
-     //0, 3, 1,
-     //1, 3, 2,
-     //0, 3, 2
-  };
-
-  */
 }
+
 
 GeometryPtr createCube() {
   std::vector<VertexPN> vertices = {
