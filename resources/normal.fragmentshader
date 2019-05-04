@@ -1,0 +1,10 @@
+#version 330 core
+
+// Output data
+out vec3 color;
+
+varying vec3 normal_var;
+
+void main() {
+  color = 0.5 * (vec3(1.0, 1.0, 1.0) + normalize(normal_var));
+}

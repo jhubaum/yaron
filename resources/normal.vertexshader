@@ -1,0 +1,17 @@
+#version 330 core
+
+// Input vertex data
+layout(location = 0) in vec3 vertex_pos;
+layout(location = 1) in vec3 vertex_normal;
+
+uniform mat4 worldMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+varying vec3 normal_var;
+
+void main(){
+  normal_var = vertex_normal;
+	gl_Position = projectionMatrix * viewMatrix * worldMatrix *
+                vec4(vertex_pos, 1.0);
+}
