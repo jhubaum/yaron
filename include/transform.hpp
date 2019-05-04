@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include <memory>
+
 struct Transform {
   Transform();
   Transform(const glm::vec3 &position);

@@ -1,13 +1,11 @@
 #version 330 core
 
-// Ouput data
+// Output data
 out vec3 color;
 
-//in vec3 vertexColor;
-
-uniform vec4 mainColor;
+uniform vec3 mainColor;
 
 void main()
 {
-	color = mainColor.rgb;
+	color = mainColor;
 }

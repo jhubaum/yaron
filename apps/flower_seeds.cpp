@@ -77,13 +77,21 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
+  renderContext()->clearColor(Color::green);
+
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());
-  _camera->transform().lock()->position.z = -5.0f;
-  _light.transform->position.z = -5.0f;
+  auto t = _camera->transform().lock();
+  t->position.z = -5.0f;
+  t->position.x = -5.0f;
+  t->position.y =  5.0f;
+  t->rotation = glm::quatLookAt(glm::normalize(t->position), glm::vec3(0.0f, 1.0f, 0.0f));
+  _light.transform->position = glm::vec3(5.0f, 5.0f, 0.0f);
 
   _transform = std::make_shared<Transform>();
   _controller = Controller(_transform,
                            renderContext()->window());
+
+  _light.transform->scale *= 0.1f;
 
   auto circleGeometry = createCircle(8, _radius);
 
@@ -108,12 +116,13 @@ void FlowerApp::vOnRender() {
   renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
-  _shader->set<Color>("diffuseColor", Color(0.5f, 0.0f, 0.0f));
+  _shader->set<Color>("diffuseColor", Color(0.3f, 0.3f, 0.3f));
   _shader->set<glm::vec3>("cameraPos", _camera->transform().lock()->position);
   _shader->set("light", _light);
 
   static auto geo = createCube();
   renderContext()->renderGeometry(geo, _transform->calculateWorld());
+
   renderContext()->endFrame();
   return;
 

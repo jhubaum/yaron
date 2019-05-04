@@ -8,8 +8,8 @@
 #include <iostream>
 
 void addNormals(std::vector<VertexPN> &vertices, unsigned short a, unsigned short b, unsigned short c) {
-  glm::vec3 normal = glm::cross(vertices[c].pos - vertices[a].pos,
-                                vertices[b].pos - vertices[a].pos);
+  glm::vec3 normal = glm::cross(vertices[b].pos - vertices[a].pos,
+                                vertices[c].pos - vertices[a].pos);
   normal = glm::normalize(normal);
   vertices[a].normal = normal;
   vertices[b].normal = normal;
