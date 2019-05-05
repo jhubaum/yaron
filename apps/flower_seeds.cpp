@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <glm/gtc/constants.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include <controls.hpp>
 
@@ -80,8 +81,6 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
 
   _geometry = createSphere(8, 8, _radius);
 
-  updateRotation(0.25f);
-
   return true;
 }
 
@@ -90,8 +89,8 @@ void FlowerApp::vOnDeinit() {
 }
 
 void FlowerApp::vOnUpdate(float dt) {
-  //_currentRotation += 0.001f * dt;
-  //updateRotation(_currentRotation);
+  _currentRotation += 0.001f * dt;
+  updateRotation(_currentRotation);
 
   _controller.update(dt);
 }
@@ -113,10 +112,12 @@ void FlowerApp::vOnRender() {
 }
 
 void FlowerApp::updateRotation(float value) {
-  float angle = value * 2.0f * glm::pi<float>();
-  for(int i=0; i<_seeds.size(); ++i) {
+  float angle = 2 * glm::pi<float>() * value;
+
+  for (int i=0; i<_seeds.size(); ++i) {
     float rad = 0.5f * i * _radius;
-    _seeds[i].x = rad * glm::cos(angle*i);
-    _seeds[i].y = rad * glm::sin(angle*i);
+    _seeds[i] = /*glm::rotate(*/glm::vec3(rad * cos(i * angle), rad * sin(i * angle), 0.0f);/*,
+                            i * angle,
+                            glm::vec3(1.0f, 1.0f, 0.0f));*/
   }
 }
