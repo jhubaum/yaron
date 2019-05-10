@@ -57,13 +57,10 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
     .addFragmentShader("resources/light.fragmentshader")
     .build();
 
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LESS);
+  _shader->enableDepthTest(DepthTest::Less);
+  _shader->setCulling(CullFace::Back);
 
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-
-  //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+  //_shader->setPolygonMode(PolygonMode::Line);
 
   renderContext()->clearColor(Color::green);
 
@@ -98,8 +95,6 @@ void FlowerApp::vOnUpdate(float dt) {
 }
 
 void FlowerApp::vOnRender() {
-  static auto textRenderer = TextRenderer::create("resources/TIMESR.ttf", 16);
-
   renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
@@ -112,7 +107,8 @@ void FlowerApp::vOnRender() {
     renderContext()->renderGeometry(_geometry, world);
   }
 
-  textRenderer->renderText(0, 0, "This is a test");
+  //static auto textRenderer = TextRenderer::create("resources/TIMESR.ttf", 16);
+  //textRenderer->renderText(renderContext()->window(), 0, 0, "This is a test");
   renderContext()->endFrame();
 }
 

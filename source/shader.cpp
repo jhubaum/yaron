@@ -145,6 +145,57 @@ void Shader::setWorld(const glm::mat4 &value)
   glUniformMatrix4fv(_worldHandle, 1, GL_FALSE, &value[0][0]);
 }
 
+
+void Shader::enableBlending(BlendFunc sfactor, BlendFunc dfactor) {
+  glEnable(GL_BLEND);
+  glBlendFunc(static_cast<GLenum>(sfactor), static_cast<GLenum>(GL_ONE_MINUS_SRC_ALPHA));
+}
+
+void Shader::disableBlending() {
+  glDisable(GL_BLEND);
+}
+
+CullFace operator &(CullFace a, CullFace b) {
+  return static_cast<CullFace>(static_cast<int>(a) & static_cast<int>(b));
+}
+
+CullFace operator |(CullFace a, CullFace b) {
+  return static_cast<CullFace>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+void Shader::setCulling(CullFace cullface) {
+  if (CullFace::None == cullface) {
+    glDisable(GL_CULL_FACE);
+    return;
+  }
+
+  glEnable(GL_CULL_FACE);
+
+  GLenum cf;
+  if (CullFace::None != (cullface & CullFace::Front) &&
+      CullFace::None != (cullface & CullFace::Back))
+    cf = GL_FRONT_AND_BACK;
+  else if (CullFace::None != (cullface & CullFace::Front))
+    cf = GL_FRONT;
+  else
+    cf = GL_BACK;
+
+  glCullFace(cf);
+}
+
+void Shader::enableDepthTest(DepthTest depthTest) {
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(static_cast<GLenum>(depthTest));
+}
+
+void Shader::disableDepthTest() {
+  glDisable(GL_DEPTH_TEST);
+}
+
+void Shader::setPolygonMode(PolygonMode polygonMode) {
+  glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(polygonMode));
+}
+
 bool safeGetHandle(GLuint program, const std::string &name, GLuint *oH) {
   *oH = glGetUniformLocation(program, name.c_str());
   if (-1 == *oH) {
@@ -153,7 +204,6 @@ bool safeGetHandle(GLuint program, const std::string &name, GLuint *oH) {
   }
   return true;
 }
-
 
 template<>
 void Shader::set<float>(const std::string &name, const float &value) {
