@@ -6,6 +6,8 @@
 
 #include <light.hpp>
 
+#include <text.hpp>
+
 
 #include <iostream>
 
@@ -96,6 +98,8 @@ void FlowerApp::vOnUpdate(float dt) {
 }
 
 void FlowerApp::vOnRender() {
+  static auto textRenderer = TextRenderer::create("resources/TIMESR.ttf", 16);
+
   renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
@@ -108,6 +112,7 @@ void FlowerApp::vOnRender() {
     renderContext()->renderGeometry(_geometry, world);
   }
 
+  textRenderer->renderText(0, 0, "This is a test");
   renderContext()->endFrame();
 }
 
