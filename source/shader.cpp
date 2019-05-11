@@ -124,7 +124,7 @@ bool Shader::init(GLuint program) {
 
   _worldHandle = glGetUniformLocation(_program, "worldMatrix");
 
-  if(-1 == _worldHandle) {
+  if(false && -1 == _worldHandle) {
     std::cout << "Shader: Not all transformation matrices are available." << std::endl;
     return false;
   }

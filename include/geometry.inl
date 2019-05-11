@@ -25,10 +25,12 @@ Geometry<TVertex>::Geometry(GLuint vao, GLuint vb, GLuint ib, uint32_t ic) : Geo
 
 template<typename TVertex>
 void Geometry<TVertex>::vEnableVertexAttributes() {
+  glBindVertexArray(vertexArray());
   enableVertexAttributes<TVertex>(vertexBuffer(), indexBuffer());
 }
 
 template<typename TVertex>
 void Geometry<TVertex>::vDisableVertexAttributes() {
   disableVertexAttributes<TVertex>();
+  glBindVertexArray(0);
 }

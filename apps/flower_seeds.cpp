@@ -37,6 +37,7 @@ private:
 
   ShaderPtr _shader;
   std::shared_ptr<PerspectiveCamera> _camera;
+  std::shared_ptr<TextRenderer> _textRenderer;
 
   std::vector<glm::vec3> _seeds;
   GeometryPtr _geometry;
@@ -53,8 +54,8 @@ App *allocateApplication() {
 
 bool FlowerApp::vOnInit(char *argv[], int argc) {
   _shader = ShaderBuilder()
-    .addVertexShader("resources/light.vertexshader")
-    .addFragmentShader("resources/light.fragmentshader")
+    .addVertexShader("resources/shaders/light.vertexshader")
+    .addFragmentShader("resources/shaders/light.fragmentshader")
     .build();
 
   _shader->enableDepthTest(DepthTest::Less);
@@ -79,6 +80,7 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
                            renderContext()->window());
 
   _geometry = createSphere(8, 8, _radius);
+  _textRenderer = TextRenderer::create("resources/fonts/TIMESR.ttf", 16);
 
   return true;
 }
@@ -107,8 +109,9 @@ void FlowerApp::vOnRender() {
     renderContext()->renderGeometry(_geometry, world);
   }
 
-  //static auto textRenderer = TextRenderer::create("resources/TIMESR.ttf", 16);
-  //textRenderer->renderText(renderContext()->window(), 0, 0, "This is a test");
+  Text text("This is a test", glm::vec2(0.0f, 0.0f), Color::purple);
+  _textRenderer->renderText(renderContext()->window(), text);
+
   renderContext()->endFrame();
 }
 

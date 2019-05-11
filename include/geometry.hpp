@@ -25,6 +25,8 @@ protected:
   Geometry_B(GLuint vertexArrayObject, GLuint vertexBuffer,
              GLuint indexBuffer, uint32_t indexCount);
 
+  GLuint vertexArray() const { return _vertexArray; }
+
 private:
   GLuint _vertexArray;
   GLuint _vertexBuffer;
