@@ -1,68 +1,66 @@
 #pragma once
+#include <fwd.hpp>
 
-#include <glm/glm.hpp>
-#include <transform.hpp>
+namespace yaron {
+  class Camera {
+  public:
+    Camera(float near, float far);
+    virtual ~Camera() = 0;
 
-#include <memory>
+    glm::mat4 viewMatrix() const;
+    virtual glm::mat4 projectionMatrix() const = 0;
 
-class Camera {
-public:
-  Camera(float near, float far);
-  virtual ~Camera() = 0;
+    float near() const;
+    float far() const;
 
-  glm::mat4 viewMatrix() const;
-  virtual glm::mat4 projectionMatrix() const = 0;
+    void near(float value);
+    void far(float value);
 
-  float near() const;
-  float far() const;
+    std::weak_ptr<Transform> transform();
+  private:
+    float _near;
+    float _far;
 
-  void near(float value);
-  void far(float value);
+    std::shared_ptr<Transform> _transform;
+  };
 
-  std::weak_ptr<Transform> transform();
-private:
-  float _near;
-  float _far;
+  class PerspectiveCamera : public Camera {
+  public:
+    PerspectiveCamera(float fov, float aspect, float near=0.1f, float far=100.0f);
 
-  std::shared_ptr<Transform> _transform;
-};
+    float fov() const;
+    float aspect() const;
 
-class PerspectiveCamera : public Camera {
-public:
-  PerspectiveCamera(float fov, float aspect, float near=0.1f, float far=100.0f);
+    void fov(float value);
+    void aspect(float value);
 
-  float fov() const;
-  float aspect() const;
+    glm::mat4 projectionMatrix() const final override;
 
-  void fov(float value);
-  void aspect(float value);
+  private:
+    float _fov;
+    float _aspect;
+  };
 
-  glm::mat4 projectionMatrix() const final override;
+  class OrthographicCamera : public Camera {
+  public:
+    OrthographicCamera(float left, float right, float bottom, float top, float near=0.1f, float far=100.0f);
 
-private:
-  float _fov;
-  float _aspect;
-};
+    float left() const;
+    float right() const;
+    float bottom() const;
+    float top() const;
 
-class OrthographicCamera : public Camera {
-public:
-  OrthographicCamera(float left, float right, float bottom, float top, float near=0.1f, float far=100.0f);
+    void left(float value);
+    void right(float value);
+    void bottom(float value);
+    void top(float value);
 
-  float left() const;
-  float right() const;
-  float bottom() const;
-  float top() const;
+    glm::mat4 projectionMatrix() const final override;
 
-  void left(float value);
-  void right(float value);
-  void bottom(float value);
-  void top(float value);
-
-  glm::mat4 projectionMatrix() const final override;
-
-private:
-  float _left;
-  float _right;
-  float _bottom;
-  float _top;
-};
+  private:
+    float _left;
+    float _right;
+    float _bottom;
+    float _top;
+  };
+}

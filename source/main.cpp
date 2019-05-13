@@ -1,7 +1,7 @@
 #include <app.hpp>
 
 int main(int argc, char *argv[]) {
-  App *pApp = allocateApplication();
+  yaron::App *pApp = yaron::allocateApplication();
 
   if (pApp->init(argv, argc)) {
     while (!pApp->exitRequest()) {

@@ -2,24 +2,28 @@
 
 #include <algorithm>
 
-InputManager::InputManager()
-  : _window(nullptr)
-{}
+#include <glm/glm.hpp>
 
-InputManager::InputManager(GLFWwindow *window)
-  : _window(window)
-{}
+namespace yaron {
+  InputManager::InputManager()
+    : _window(nullptr)
+  {}
 
-glm::vec2 InputManager::mousePosition() const {
-  if (nullptr == _window)
-    return glm::vec2(0.0f, 0.0f);
+  InputManager::InputManager(GLFWwindow *window)
+    : _window(window)
+  {}
 
-  double x, y;
-  glfwGetCursorPos(_window, &x, &y);
+  glm::vec2 InputManager::mousePosition() const {
+    if (nullptr == _window)
+      return glm::vec2(0.0f, 0.0f);
 
-  int width, height;
-  glfwGetWindowSize(_window, &width, &height);
+    double x, y;
+    glfwGetCursorPos(_window, &x, &y);
 
-  return glm::vec2(std::clamp(static_cast<float>(x / width), 0.0f, 1.0f),
-                   std::clamp(1.0f - static_cast<float>(y / height), 0.0f, 1.0f));
-};
+    int width, height;
+    glfwGetWindowSize(_window, &width, &height);
+
+    return glm::vec2(std::clamp(static_cast<float>(x / width), 0.0f, 1.0f),
+                     std::clamp(1.0f - static_cast<float>(y / height), 0.0f, 1.0f));
+  };
+}

@@ -1,14 +1,20 @@
-#include <app.hpp>
-#include <primitives.hpp>
-#include <camera.hpp>
-
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <cstdlib>
-#include <ctime>
+#include <app.hpp>
+#include <camera.hpp>
+#include <color.hpp>
+#include <transform.hpp>
+#include <graphics/context.hpp>
+#include <graphics/primitives.hpp>
+#include <graphics/shader.hpp>
+
+using namespace yaron;
+using namespace yaron::graphics;
 
 float generateRandomFloat(float minV=0.0f, float maxV=1.0f) {
   return (static_cast<float>(std::rand()) / RAND_MAX) * (maxV-minV) + minV;
@@ -46,7 +52,7 @@ private:
   std::vector<glm::vec3> _anchor;
 };
 
-App *allocateApplication() {
+App *yaron::allocateApplication() {
   return new ChaosPointFractal(7500, 3);
 }
 
@@ -72,11 +78,12 @@ bool ChaosPointFractal::vOnInit(char *argv[], int argc) {
     _points[i] = gen;
   }
 
+  renderContext()->setCamera(_camera);
+
   return true;
 }
 
 void ChaosPointFractal::vOnRender() {
-  renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
   glm::mat4 identity(1.0f);
@@ -87,6 +94,4 @@ void ChaosPointFractal::vOnRender() {
   _shader->set<Color>("mainColor", Color::blue);
   for (int i=0; i<_anchor.size(); ++i)
     renderContext()->renderGeometry(_geometry, glm::translate(identity, _anchor[i]));
-
-  renderContext()->endFrame();
 }

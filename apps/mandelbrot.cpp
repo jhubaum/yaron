@@ -1,19 +1,22 @@
-#include <app.hpp>
-#include <context.hpp>
-#include <shader.hpp>
-#include <primitives.hpp>
-
-#include <input.hpp>
-
+#include <iostream>
 #include <vector>
+
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <vertex.hpp>
-
+#include <app.hpp>
+#include <input.hpp>
 #include <complex.hpp>
+#include <camera.hpp>
+#include <transform.hpp>
 
-#include <iostream>
+#include <graphics/context.hpp>
+#include <graphics/shader.hpp>
+#include <graphics/primitives.hpp>
+#include <graphics/geometry.hpp>
+
+using namespace yaron;
+using namespace yaron::graphics;
 
 bool isStable(const ComplexNumber &c) {
   return c.re * c.re + c.im * c.im < 4.0f;
@@ -60,7 +63,7 @@ private:
   InputManager _input;
 };
 
-App *allocateApplication() {
+App *yaron::allocateApplication() {
   return new MandelbrotApp(25);
 }
 
@@ -76,6 +79,8 @@ bool MandelbrotApp::vOnInit(char *argv[], int argc) {
   _input = InputManager(renderContext()->window());
   _geometry = createCircle(8, 0.02f);
 
+  renderContext()->setCamera(_camera);
+
   return true;
 }
 
@@ -88,7 +93,6 @@ void MandelbrotApp::vOnUpdate(float dt) {
 }
 
 void MandelbrotApp::vOnRender() {
-  renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
   _shader->set<Color>("mainColor", Color::grey);
@@ -101,8 +105,6 @@ void MandelbrotApp::vOnRender() {
     _shader->set<Color>("mainColor", _coordinates[i].col);
     renderContext()->renderGeometry(_geometry, _coordinates[i].worldMatrix);
   }
-
-  renderContext()->endFrame();
 }
 
 void MandelbrotApp::initIterations(const ComplexNumber &constant) {

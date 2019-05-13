@@ -1,35 +1,35 @@
 #pragma once
+#include <fwd.hpp>
 
-#include <context.hpp>
-#include <string>
+namespace yaron {
+  class App {
+  public:
+    App();
+    virtual ~App() = 0;
 
-class App {
-public:
-  App();
-  virtual ~App() = 0;
+    bool init(char *argv[], int argc);
+    void deinit();
 
-  bool init(char *argv[], int argc);
-  void deinit();
+    void update();
+    void render();
 
-  void update();
-  void render();
+    bool exitRequest();
 
-  bool exitRequest();
+    std::string resourcePath(const std::string &name) const;
 
-  std::string resourcePath(const std::string &name) const;
+  protected:
+    virtual bool vOnInit(char *argv[], int argc);
+    virtual void vOnDeinit();
 
-protected:
-  virtual bool vOnInit(char *argv[], int argc) { return true; }
-  virtual void vOnDeinit() { }
+    virtual void vOnUpdate(float dt);
+    virtual void vOnRender();
 
-  virtual void vOnUpdate(float dt) { }
-  virtual void vOnRender() { }
-
-  RenderContextPtr renderContext() { return _renderContext; }
+    graphics::RenderContextPtr renderContext();
 
 private:
-  RenderContextPtr _renderContext;
-  float _lastTime;
-};
+    graphics::RenderContextPtr _renderContext;
+    float _lastTime;
+  };
 
-App *allocateApplication();
+  App *allocateApplication();
+}

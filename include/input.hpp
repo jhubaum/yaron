@@ -1,15 +1,18 @@
 #pragma once
+#include <fwd.hpp>
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
 
-class InputManager {
-public:
-  InputManager();
-  InputManager(GLFWwindow *window);
+namespace yaron {
+  class InputManager {
+  public:
+    InputManager();
+    InputManager(GLFWwindow *window);
 
-  glm::vec2 mousePosition() const;
+    glm::vec2 mousePosition() const;
 
-private:
-  GLFWwindow *_window;
-};
+  private:
+    GLFWwindow *_window;
+  };
+}

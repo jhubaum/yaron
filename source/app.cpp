@@ -1,46 +1,64 @@
 #include <app.hpp>
 #include <iostream>
 
-App::App()
-{ }
+#include <graphics/context.hpp>
 
-App::~App()
-{ }
+namespace yaron {
+  App::App()
+  { }
 
-bool App::init(char *argv[], int argc) {
-  std::string baseName(argv[0]);
+  App::~App()
+  { }
 
-  std::cout << baseName << std::endl;
+  bool App::init(char *argv[], int argc) {
+    std::string baseName(argv[0]);
 
-  RenderSettings settings;
-  _renderContext = RenderContext::create(settings);
+    std::cout << baseName << std::endl;
 
-  if (nullptr == _renderContext)
-    return false;
+    graphics::RenderSettings settings;
+    _renderContext = graphics::RenderContext::create(settings);
 
-  _lastTime = glfwGetTime();
+    if (nullptr == _renderContext)
+      return false;
 
-  return vOnInit(argv, argc);
-}
+    _lastTime = glfwGetTime();
+    return vOnInit(argv, argc);
+  }
 
-void App::deinit() {
-  vOnDeinit();
-}
+  void App::deinit() {
+    vOnDeinit();
+  }
 
-void App::update() {
-  float time = glfwGetTime();
-  vOnUpdate(time-_lastTime);
-  _lastTime = time;
-}
+  void App::update() {
+    float time = glfwGetTime();
+    vOnUpdate(time-_lastTime);
+    _lastTime = time;
+  }
 
-void App::render() {
-  vOnRender();
-}
+  void App::render() {
+    _renderContext->beginFrame();
+    vOnRender();
+    _renderContext->endFrame();
+  }
 
-bool App::exitRequest() {
-  return _renderContext->exitRequest();
-}
+  bool App::exitRequest() {
+    return _renderContext->exitRequest();
+  }
 
-std::string App::resourcePath(const std::string &name) const {
-  return name;
+  std::string App::resourcePath(const std::string &name) const {
+    return name;
+  }
+
+  bool App::vOnInit(char *argv[], int argc) {
+    return true;
+  }
+
+  void App::vOnDeinit() { }
+
+  void App::vOnUpdate(float dt) { }
+  void App::vOnRender() { }
+
+  graphics::RenderContextPtr App::renderContext() {
+    return _renderContext;
+  }
 }

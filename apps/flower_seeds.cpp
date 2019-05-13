@@ -1,22 +1,21 @@
-#include <app.hpp>
-#include <context.hpp>
-#include <shader.hpp>
-#include <primitives.hpp>
-#include <transform.hpp>
-
-#include <light.hpp>
-
-#include <text.hpp>
-
-
 #include <iostream>
-
 #include <vector>
 
 #include <glm/gtc/constants.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+#include <app.hpp>
+#include <transform.hpp>
+#include <light.hpp>
 #include <controls.hpp>
+#include <camera.hpp>
+#include <graphics/context.hpp>
+#include <graphics/shader.hpp>
+#include <graphics/primitives.hpp>
+#include <graphics/text.hpp>
+
+using namespace yaron;
+using namespace yaron::graphics;
 
 class FlowerApp : public App {
 public:
@@ -27,7 +26,6 @@ public:
 
 protected:
   bool vOnInit(char *argv[], int argc) final override;
-  void vOnDeinit() final override;
 
   void vOnUpdate(float dt) final override;
   void vOnRender() final override;
@@ -48,7 +46,7 @@ private:
   PointLight _light;
 };
 
-App *allocateApplication() {
+App *yaron::allocateApplication() {
   return new FlowerApp(1000, 0.02f);
 }
 
@@ -57,13 +55,6 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
     .addVertexShader("resources/shaders/light.vertexshader")
     .addFragmentShader("resources/shaders/light.fragmentshader")
     .build();
-
-  _shader->enableDepthTest(DepthTest::Less);
-  _shader->setCulling(CullFace::Back);
-
-  //_shader->setPolygonMode(PolygonMode::Line);
-
-  renderContext()->clearColor(Color::green);
 
   // Initialize light
   _light.transform->position = glm::vec3(-5.0f, 2.0f, 5.0f);
@@ -80,13 +71,14 @@ bool FlowerApp::vOnInit(char *argv[], int argc) {
                            renderContext()->window());
 
   _geometry = createSphere(8, 8, _radius);
-  _textRenderer = TextRenderer::create("resources/fonts/TIMESR.ttf", 16);
+  _textRenderer = TextRenderer::create("resources/fonts/TIMESR.ttf", 32);
+
+  renderContext()->enableDepthTest(DepthTest::Less);
+  renderContext()->setCulling(CullFace::Back);
+  renderContext()->clearColor(Color::green);
+  renderContext()->setCamera(_camera);
 
   return true;
-}
-
-void FlowerApp::vOnDeinit() {
-  _shader = nullptr;
 }
 
 void FlowerApp::vOnUpdate(float dt) {
@@ -97,7 +89,6 @@ void FlowerApp::vOnUpdate(float dt) {
 }
 
 void FlowerApp::vOnRender() {
-  renderContext()->beginFrame(_camera);
   renderContext()->useShader(_shader);
 
   _shader->set<Color>("diffuseColor", Color(0.3f, 0.3f, 0.3f));
@@ -110,9 +101,7 @@ void FlowerApp::vOnRender() {
   }
 
   Text text("This is a test", glm::vec2(0.0f, 0.0f), Color::purple);
-  _textRenderer->renderText(renderContext()->window(), text);
-
-  renderContext()->endFrame();
+  _textRenderer->renderText(renderContext(), text);
 }
 
 void FlowerApp::updateRotation(float value) {
