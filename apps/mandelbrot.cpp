@@ -69,8 +69,8 @@ App *yaron::allocateApplication() {
 
 bool MandelbrotApp::vOnInit(char *argv[], int argc) {
   _shader = ShaderBuilder()
-    .addVertexShader("resources/simple.vertexshader")
-    .addFragmentShader("resources/simple.fragmentshader")
+    .addVertexShader("resources/shaders/simple.vertexshader")
+    .addFragmentShader("resources/shaders/simple.fragmentshader")
     .build();
 
   _camera = std::make_shared<OrthographicCamera>(-4.0f, 2.0f, -1.6f, 1.6f);
