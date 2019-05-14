@@ -9,6 +9,10 @@
 namespace yaron {
   namespace graphics {
 
+    /// A list of renderable primitives
+    /**
+     * Specifies how the vertices in a render call are interpreted
+     */
     enum class DrawMode : GLenum {
       Points = GL_POINTS,
       LineStrip = GL_LINE_STRIP,
@@ -23,14 +27,19 @@ namespace yaron {
       TrianglesAdjacency = GL_TRIANGLES_ADJACENCY
     };
 
+    /// A builder class for Shader objects
     class ShaderBuilder {
     public:
       ShaderBuilder();
       ~ShaderBuilder();
 
+      /// Add a vertex shader to the shader object
       ShaderBuilder& addVertexShader(const std::string& filename);
+
+      /// Add a fragment shader to the shader object
       ShaderBuilder& addFragmentShader(const std::string& filename);
 
+      /// Create the Shader object
       ShaderPtr build();
 
     private:

@@ -2,6 +2,7 @@
 #include <fwd.hpp>
 
 namespace yaron {
+  /// The central class of yaron
   class App {
   public:
     App();
