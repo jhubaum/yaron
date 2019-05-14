@@ -27,7 +27,7 @@ public:
   {}
 
 protected:
-  bool vOnInit(char *argv[], int argc) final override;
+  bool vOnInit(const std::vector<std::string>&) final override;
   void vOnRender() final override;
 
 private:
@@ -43,10 +43,10 @@ App *yaron::allocateApplication() {
   return new ChaosPointFractal(7500, 3);
 }
 
-bool ChaosPointFractal::vOnInit(char *argv[], int argc) {
+bool ChaosPointFractal::vOnInit(const std::vector<std::string> &args) {
   _shader = ShaderBuilder()
-    .addVertexShader("resources/simple.vertexshader")
-    .addFragmentShader("resources/simple.fragmentshader")
+    .addVertexShader(resourcePath("shaders/simple.vertexshader"))
+    .addFragmentShader(resourcePath("shaders/simple.fragmentshader"))
     .build();
 
   _camera = std::make_shared<OrthographicCamera>(-1.2f, 1.2f, -1.2f, 1.2f);

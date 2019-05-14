@@ -22,7 +22,7 @@ public:
   { }
 
 protected:
-  bool vOnInit(char *argv[], int argc) final override;
+  bool vOnInit(const std::vector<std::string>&) final override;
 
   void vOnUpdate(float dt) final override;
   void vOnRender() final override;
@@ -41,7 +41,7 @@ App *yaron::allocateApplication() {
   return new VoxelLandscape(100, 100);
 }
 
-bool VoxelLandscape::vOnInit(char *argv[], int argc) {
+bool VoxelLandscape::vOnInit(const std::vector<std::string> &args) {
   for (int i=0; i<_xCount; ++i) {
     for (int j=0; j<_yCount; ++j) {
       _voxels[i*_xCount+j] = glm::vec3(i, 0.0f, j);
@@ -49,8 +49,8 @@ bool VoxelLandscape::vOnInit(char *argv[], int argc) {
   }
 
   _shader = ShaderBuilder()
-    .addVertexShader("resources/shaders/simple.vertexshader")
-    .addFragmentShader("resources/shaders/simple.fragmentshader")
+    .addVertexShader(resourcePath("shaders/simple.vertexshader"))
+    .addFragmentShader(resourcePath("shaders/simple.fragmentshader"))
     .build();
 
   _camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), renderContext()->aspectRatio());

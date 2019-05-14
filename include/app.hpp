@@ -8,7 +8,7 @@ namespace yaron {
     App();
     virtual ~App() = 0;
 
-    bool init(char *argv[], int argc);
+    bool init(int argc, char *argv[]);
     void deinit();
 
     void update();
@@ -19,7 +19,7 @@ namespace yaron {
     std::string resourcePath(const std::string &name) const;
 
   protected:
-    virtual bool vOnInit(char *argv[], int argc);
+    virtual bool vOnInit(const std::vector<std::string> &arguments);
     virtual void vOnDeinit();
 
     virtual void vOnUpdate(float dt);
@@ -29,6 +29,7 @@ namespace yaron {
 
 private:
     graphics::RenderContextPtr _renderContext;
+    std::string _resourceFolder;
     float _lastTime;
   };
 

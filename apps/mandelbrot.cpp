@@ -45,7 +45,7 @@ public:
   {}
 
 protected:
-  bool vOnInit(char *argv[], int argc) final override;
+  bool vOnInit(const std::vector<std::string>&) final override;
   void vOnUpdate(float dt) final override;
   void vOnRender() final override;
 
@@ -67,10 +67,10 @@ App *yaron::allocateApplication() {
   return new MandelbrotApp(25);
 }
 
-bool MandelbrotApp::vOnInit(char *argv[], int argc) {
+bool MandelbrotApp::vOnInit(const std::vector<std::string> &args) {
   _shader = ShaderBuilder()
-    .addVertexShader("resources/shaders/simple.vertexshader")
-    .addFragmentShader("resources/shaders/simple.fragmentshader")
+    .addVertexShader(resourcePath("shaders/simple.vertexshader"))
+    .addFragmentShader(resourcePath("shaders/simple.fragmentshader"))
     .build();
 
   _camera = std::make_shared<OrthographicCamera>(-4.0f, 2.0f, -1.6f, 1.6f);

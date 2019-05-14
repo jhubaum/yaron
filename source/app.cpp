@@ -5,15 +5,22 @@
 
 namespace yaron {
   App::App()
+    : _resourceFolder("")
   { }
 
   App::~App()
   { }
 
-  bool App::init(char *argv[], int argc) {
+  bool App::init(int argc, char *argv[]) {
     std::string baseName(argv[0]);
+    std::string::size_type execDir = baseName.find_last_of("/\\");
+    if (std::string::npos != execDir)
+      _resourceFolder =  baseName.substr(0, execDir + 1);
+    _resourceFolder.append("../resources/");
 
-    std::cout << baseName << std::endl;
+    std::vector<std::string> args(argc-1);
+    for (int i=1; i<argc; ++i)
+      args[i-1] = argv[i];
 
     graphics::RenderSettings settings;
     _renderContext = graphics::RenderContext::create(settings);
@@ -22,7 +29,7 @@ namespace yaron {
       return false;
 
     _lastTime = glfwGetTime();
-    return vOnInit(argv, argc);
+    return vOnInit(args);
   }
 
   void App::deinit() {
@@ -46,10 +53,10 @@ namespace yaron {
   }
 
   std::string App::resourcePath(const std::string &name) const {
-    return name;
+    return _resourceFolder + name;
   }
 
-  bool App::vOnInit(char *argv[], int argc) {
+  bool App::vOnInit(const std::vector<std::string> &args) {
     return true;
   }
 

@@ -25,7 +25,7 @@ public:
   { }
 
 protected:
-  bool vOnInit(char *argv[], int argc) final override;
+  bool vOnInit(const std::vector<std::string>&) final override;
 
   void vOnUpdate(float dt) final override;
   void vOnRender() final override;
@@ -50,10 +50,10 @@ App *yaron::allocateApplication() {
   return new FlowerApp(1000, 0.02f);
 }
 
-bool FlowerApp::vOnInit(char *argv[], int argc) {
+bool FlowerApp::vOnInit(const std::vector<std::string> &args) {
   _shader = ShaderBuilder()
-    .addVertexShader("resources/shaders/light.vertexshader")
-    .addFragmentShader("resources/shaders/light.fragmentshader")
+    .addVertexShader(resourcePath("shaders/light.vertexshader"))
+    .addFragmentShader(resourcePath("shaders/light.fragmentshader"))
     .build();
 
   // Initialize light
