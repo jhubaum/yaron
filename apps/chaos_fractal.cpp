@@ -1,6 +1,4 @@
 #include <vector>
-#include <cstdlib>
-#include <ctime>
 
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -9,6 +7,7 @@
 #include <camera.hpp>
 #include <color.hpp>
 #include <transform.hpp>
+#include <random.hpp>
 #include <graphics/context.hpp>
 #include <graphics/primitives.hpp>
 #include <graphics/shader.hpp>
@@ -16,21 +15,9 @@
 using namespace yaron;
 using namespace yaron::graphics;
 
-float generateRandomFloat(float minV=0.0f, float maxV=1.0f) {
-  return (static_cast<float>(std::rand()) / RAND_MAX) * (maxV-minV) + minV;
-}
-
-int generateRandomInt(int minV, int maxV) {
-  return (std::rand() % (maxV - minV)) + minV;
-}
-
-int generateRandomInt(int maxV) {
-  return generateRandomInt(0, maxV);
-}
-
-glm::vec3 generateRandomVec(float min=0.0f, float max=1.0f) {
-  return glm::vec3(generateRandomFloat(min, max),
-                   generateRandomFloat(min, max), 0.0f);
+template<>
+glm::vec3 yaron::Random::rand<glm::vec3>() {
+  return glm::vec3(rand<float>(), rand<float>(), 0.0f);
 }
 
 class ChaosPointFractal : public App {
@@ -71,10 +58,10 @@ bool ChaosPointFractal::vOnInit(char *argv[], int argc) {
     _anchor[i] = glm::vec3(cos(angle), sin(angle), 0.0f);
   }
 
-  std::srand(std::time(nullptr));
-  glm::vec3 gen = generateRandomVec();
+  auto r = Random();
+  glm::vec3 gen = r.rand<glm::vec3>();
   for(int i=0; i<_points.size(); ++i) {
-    gen = 0.5f * (gen + _anchor[generateRandomInt(_anchor.size())]);
+    gen = 0.5f * (gen + _anchor[r.randInt(0, _anchor.size())]);
     _points[i] = gen;
   }
 
