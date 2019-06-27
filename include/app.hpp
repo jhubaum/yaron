@@ -1,6 +1,8 @@
 #pragma once
 #include <fwd.hpp>
 
+#include <input.hpp>
+
 namespace yaron {
   /// The central class of yaron
   class App {
@@ -26,9 +28,11 @@ namespace yaron {
     virtual void vOnRender();
 
     graphics::RenderContextPtr renderContext();
+    InputManager &input();
 
 private:
     graphics::RenderContextPtr _renderContext;
+    InputManager _input;
     std::string _resourceFolder;
     float _lastTime;
   };

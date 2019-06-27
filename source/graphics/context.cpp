@@ -69,7 +69,6 @@ namespace yaron {
       }
 
       clearColor(settings.clearColor);
-      glfwSetInputMode(_window, GLFW_STICKY_KEYS, GL_TRUE);
 
       return true;
     }

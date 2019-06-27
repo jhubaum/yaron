@@ -9,7 +9,9 @@ namespace yaron {
   Controller::Controller(std::weak_ptr<Transform> transform, GLFWwindow *window)
     : _transform(transform), _window(window), _xAxisRot(0.0f),
       _yAxisRot(0.0f)
-  {}
+  {
+    glfwSetInputMode(_window, GLFW_STICKY_KEYS, GL_TRUE);
+  }
 
   bool getKey(GLFWwindow *w, int key) {
     return GLFW_PRESS == glfwGetKey(w, key);

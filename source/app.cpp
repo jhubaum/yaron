@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <graphics/context.hpp>
+#include <input.hpp>
 
 namespace yaron {
   App::App()
@@ -37,6 +38,7 @@ namespace yaron {
   }
 
   void App::update() {
+    _input.update(_renderContext->window());
     float time = glfwGetTime();
     vOnUpdate(time-_lastTime);
     _lastTime = time;
@@ -67,5 +69,9 @@ namespace yaron {
 
   graphics::RenderContextPtr App::renderContext() {
     return _renderContext;
+  }
+
+  InputManager &App::input() {
+    return _input;
   }
 }

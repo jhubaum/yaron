@@ -5,7 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <app.hpp>
-#include <input.hpp>
 #include <complex.hpp>
 #include <camera.hpp>
 #include <transform.hpp>
@@ -59,8 +58,6 @@ private:
   GeometryPtr _line;
 
   std::shared_ptr<OrthographicCamera> _camera;
-
-  InputManager _input;
 };
 
 App *yaron::allocateApplication() {
@@ -76,7 +73,6 @@ bool MandelbrotApp::vOnInit(const std::vector<std::string> &args) {
   _camera = std::make_shared<OrthographicCamera>(-4.0f, 2.0f, -1.6f, 1.6f);
   _camera->transform().lock()->position.z = -5.0f;
 
-  _input = InputManager(renderContext()->window());
   _geometry = createCircle(8, 0.02f);
 
   renderContext()->setCamera(_camera);
@@ -85,7 +81,7 @@ bool MandelbrotApp::vOnInit(const std::vector<std::string> &args) {
 }
 
 void MandelbrotApp::vOnUpdate(float dt) {
-  glm::vec2 pos = _input.mousePosition();
+  glm::vec2 pos = input().mousePosition();
   float re = _camera->left() + pos[0] * (_camera->right() - _camera->left());
   float im = _camera->bottom() + pos[1] * (_camera->top() - _camera->bottom());
 

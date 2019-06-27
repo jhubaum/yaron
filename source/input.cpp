@@ -5,25 +5,52 @@
 #include <glm/glm.hpp>
 
 namespace yaron {
-  InputManager::InputManager()
-    : _window(nullptr)
-  {}
-
-  InputManager::InputManager(GLFWwindow *window)
-    : _window(window)
-  {}
-
-  glm::vec2 InputManager::mousePosition() const {
-    if (nullptr == _window)
-      return glm::vec2(0.0f, 0.0f);
-
+  void InputManager::update(GLFWwindow *window) {
     double x, y;
-    glfwGetCursorPos(_window, &x, &y);
+    glfwGetCursorPos(window, &x, &y);
 
     int width, height;
-    glfwGetWindowSize(_window, &width, &height);
+    glfwGetWindowSize(window, &width, &height);
 
-    return glm::vec2(std::clamp(static_cast<float>(x / width), 0.0f, 1.0f),
-                     std::clamp(1.0f - static_cast<float>(y / height), 0.0f, 1.0f));
-  };
+    _mousePosition = glm::vec2(std::clamp(static_cast<float>(x / width),
+                                          0.0f, 1.0f),
+                               std::clamp(1.0f - static_cast<float>(y / height),
+                                          0.0f, 1.0f));
+
+    for (auto & key : _keys) {
+      if (GLFW_PRESS == glfwGetKey(window, key.first))
+        key.second =
+          (KeyState::Pressed == key.second ||
+           KeyState::Down == key.second) ?
+          KeyState::Down : KeyState::Pressed;
+      else
+        key.second = KeyState::Up;
+    }
+  }
+
+  glm::vec2 InputManager::mousePosition() const {
+    return _mousePosition;
+  }
+
+  bool InputManager::getKeyPressed(int key) {
+    return KeyState::Pressed == _getKeyState(key);
+  }
+
+  bool InputManager::getKeyDown(int key) {
+    return KeyState::Down == _getKeyState(key);
+  }
+
+  bool InputManager::getKeyUp(int key) {
+    return KeyState::Up == _getKeyState(key);
+  }
+
+  InputManager::KeyState InputManager::_getKeyState(int key) {
+    auto search = _keys.find(key);
+
+    if(_keys.end() == search) {
+      _keys.insert({key, KeyState::None});
+      return KeyState::None;
+    }
+    return search->second;
+  }
 }
