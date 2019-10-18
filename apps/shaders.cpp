@@ -61,6 +61,7 @@ void ShaderTestApp::vOnRender() {
   renderContext()->useShader(_shader);
   _shader->set<glm::vec2>("u_resolution", renderContext()->resolution());
   _shader->set<float>("u_time", time());
+  _shader->set<glm::vec2>("u_mouse", input().mousePosition());
 
   renderContext()->renderGeometry(_geometry, glm::mat4(1.0f));
 }

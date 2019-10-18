@@ -12,10 +12,20 @@ namespace yaron {
     int width, height;
     glfwGetWindowSize(window, &width, &height);
 
+    /*
     _mousePosition = glm::vec2(std::clamp(static_cast<float>(x / width),
                                           0.0f, 1.0f),
                                std::clamp(1.0f - static_cast<float>(y / height),
                                           0.0f, 1.0f));
+
+    */
+    _mousePosition = glm::vec2(static_cast<float>(x),
+                               height - static_cast<float>(y));
+
+    _mousePosition.x = std::clamp(_mousePosition.x, 0.0f,
+                                  static_cast<float>(width));
+    _mousePosition.y = std::clamp(_mousePosition.y, 0.0f,
+                                  static_cast<float>(height));
 
     for (auto & key : _keys) {
       if (GLFW_PRESS == glfwGetKey(window, key.first))
