@@ -17,5 +17,12 @@ namespace yaron {
     static const Color purple;
     static const Color cyan;
     static const Color white;
+
+    static Color random(float a=1.0f);
+
+    Color operator+(const Color&) const;
+    Color operator-(const Color&) const;
+
+    Color operator*(float) const;
   };
 }

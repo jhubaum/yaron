@@ -162,6 +162,13 @@ namespace yaron {
     }
 
     template<>
+    void Shader::set<glm::vec2>(const std::string &name, const glm::vec2 &value) {
+      GLuint handle;
+      if (safeGetHandle(_program, name, &handle))
+        glUniform2f(handle, value.x, value.y);
+    }
+
+    template<>
     void Shader::set<glm::vec3>(const std::string &name, const glm::vec3 &value) {
       GLuint handle;
       if (safeGetHandle(_program, name, &handle))

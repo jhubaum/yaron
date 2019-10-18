@@ -23,6 +23,16 @@ for(int i=0; i<indices.size()/3; ++i)
 
 namespace yaron {
   namespace graphics {
+    GeometryPtr createPlane(const Rect &rect) {
+      std::vector<VertexP> vertices(4);
+      vertices[0] = { glm::vec3(rect.left, rect.bottom, 0.0f) };
+      vertices[1] = { glm::vec3(rect.left, rect.top, 0.0f) };
+      vertices[2] = { glm::vec3(rect.right, rect.top, 0.0f) };
+      vertices[3] = { glm::vec3(rect.right, rect.bottom, 0.0f) };
+
+      return Geometry<VertexP>::create(vertices, {0, 1, 2, 0, 2, 3});
+    }
+
     GeometryPtr createCircle(uint32_t vertexCount, float radius) {
       std::vector<VertexP> vertices(vertexCount);
       for (int i=0; i<vertexCount; ++i) {

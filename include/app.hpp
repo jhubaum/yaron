@@ -20,6 +20,8 @@ namespace yaron {
 
     std::string resourcePath(const std::string &name) const;
 
+    float time() const { return _lastTime; }
+
   protected:
     virtual bool vOnInit(const std::vector<std::string> &arguments);
     virtual void vOnDeinit();

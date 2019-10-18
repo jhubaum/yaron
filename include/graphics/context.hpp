@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include <color.hpp>
+#include <glm/vec2.hpp>
 
 namespace yaron {
   namespace graphics {
@@ -89,6 +90,7 @@ namespace yaron {
 
 
       float aspectRatio() const;
+      glm::vec2 resolution() const;
       void clearColor(const Color &c);
       GLFWwindow* window();
       bool exitRequest() const;
@@ -98,10 +100,13 @@ namespace yaron {
       bool init(const RenderSettings &settings);
 
       GLFWwindow *_window;
-      float _aspect;
+      glm::vec2 _resolution;
 
       std::weak_ptr<Shader> _shader;
       std::weak_ptr<Camera> _camera;
+
+      // Window Callbacks
+      static void window_size_callback(GLFWwindow* window, int width, int height);
     };
   }
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include <fwd.hpp>
 
+#include <math.hpp>
+
 namespace yaron {
   namespace graphics {
     GeometryPtr createCircle(uint32_t vertexCount, float radius=1.0f);
@@ -9,5 +11,7 @@ namespace yaron {
     // Lat: horizontal lines
     GeometryPtr createSphere(uint32_t lonCount=16, uint32_t latCount=16, float radius=1.0f);
     GeometryPtr createCube();
+
+    GeometryPtr createPlane(const Rect &rect);
   }
 }

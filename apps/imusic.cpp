@@ -11,6 +11,8 @@
 #include <graphics/shader.hpp>
 #include <graphics/primitives.hpp>
 
+#include <random.hpp>
+
 using namespace yaron;
 using namespace yaron::graphics;
 
@@ -19,10 +21,30 @@ public:
   struct Particle {
     float distance;
     float angle;
+    Color color;
+
+    static constexpr float trail = 5;
+    static constexpr float size = 0.05f;
+    static GeometryPtr geometry;
+
+    void render(ShaderPtr shader, RenderContextPtr context) {
+      for (int i=0; i<trail; ++i) {
+        shader->set<Color>("mainColor",
+                           lerp(color,
+                                Color::white,
+                                static_cast<float>(i) / trail));
+
+        float a = angle - 4.0f * glm::pi<float>() * i * size / distance;
+        auto world = glm::translate(glm::mat4(1.0f),
+                                    glm::vec3(distance * cos(a),
+                                              distance * sin(a),
+                                              0.0f));
+
+        context->renderGeometry(geometry, world);
+      }
+
+    };
   };
-  InteractiveMusicApp(float particleSize)
-    : _camera(nullptr), _particleSize(particleSize)
-  { }
 
 protected:
   bool vOnInit(const std::vector<std::string>&) final override;
@@ -33,19 +55,23 @@ protected:
 private:
   ShaderPtr _shader;
   std::shared_ptr<PerspectiveCamera> _camera;
-  GeometryPtr _geometry;
+  Random _randomizer;
 
   std::vector<InteractiveMusicApp::Particle> _particles;
-  float _particleSize;
-  float _curCenterDistance = 0.1f;
+  float _curCenterDistance = Particle::size;
   float _rotationSpeed = 1.0f;
 };
 
 App *yaron::allocateApplication() {
-  return new InteractiveMusicApp(0.05f);
+  return new InteractiveMusicApp();
 }
 
+GeometryPtr InteractiveMusicApp::Particle::geometry = nullptr;
+
+
 bool InteractiveMusicApp::vOnInit(const std::vector<std::string> &args) {
+  Particle::geometry = createCircle(16, Particle::size);
+
   _shader = ShaderBuilder()
     .addVertexShader(resourcePath("shaders/simple.vertexshader"))
     .addFragmentShader(resourcePath("shaders/simple.fragmentshader"))
@@ -56,7 +82,6 @@ bool InteractiveMusicApp::vOnInit(const std::vector<std::string> &args) {
   auto t = _camera->transform().lock();
   t->position = glm::vec3(0.0f, 0.0f, -5.0f);
 
-  _geometry = createCircle(16, _particleSize);
 
   renderContext()->enableDepthTest(DepthTest::Less);
   renderContext()->setCulling(CullFace::Back);
@@ -68,8 +93,9 @@ bool InteractiveMusicApp::vOnInit(const std::vector<std::string> &args) {
 
 void InteractiveMusicApp::vOnUpdate(float dt) {
   if (input().getKeyPressed(GLFW_KEY_SPACE)) {
-    _particles.push_back({ _curCenterDistance, 0.0f});
-    _curCenterDistance += 2 * _particleSize;
+    _particles.push_back({ _curCenterDistance, 0.0f,
+                           _randomizer.rand<Color>() });
+    _curCenterDistance += 2 * Particle::size;
   }
 
   for (int i=0; i<_particles.size(); ++i)
@@ -78,15 +104,6 @@ void InteractiveMusicApp::vOnUpdate(float dt) {
 
 void InteractiveMusicApp::vOnRender() {
   renderContext()->useShader(_shader);
-
-  _shader->set<Color>("mainColor", Color(0.3f, 0.3f, 0.3f));
-
-  for (int i=0; i<_particles.size(); ++i) {
-    const Particle &p = _particles[i];
-    auto world = glm::translate(glm::mat4(1.0f),
-                                glm::vec3(p.distance * cos(p.angle),
-                                          p.distance * sin(p.angle),
-                                          0.0f));
-    renderContext()->renderGeometry(_geometry, world);
-  }
+  for (int i=0; i<_particles.size(); ++i)
+    _particles[i].render(_shader, renderContext());
 }

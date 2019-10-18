@@ -27,6 +27,15 @@ namespace yaron {
     RenderContext::RenderContext()
     {}
 
+
+    void RenderContext::window_size_callback(GLFWwindow *window, int width, int height) {
+      RenderContext *c = reinterpret_cast<RenderContext*>(glfwGetWindowUserPointer(window));
+
+      c->_resolution = { width, height };
+
+      std::cout << "Window Resize" << std::endl;
+    }
+
     RenderContextPtr RenderContext::create(const RenderSettings &settings) {
       struct SharedEnabler : public RenderContext { };
 
@@ -47,8 +56,6 @@ namespace yaron {
         return false;
       }
 
-      _aspect = static_cast<float>(settings.width) / settings.height;
-
       glfwWindowHint(GLFW_SAMPLES, 4);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -63,12 +70,17 @@ namespace yaron {
       }
       glfwMakeContextCurrent(_window);
 
+      glfwSetWindowSizeCallback(_window, window_size_callback);
+      glfwSetWindowUserPointer(_window, this);
+
       if(GLEW_OK != glewInit()) {
         std::cout << "Failed to initialize GLEW" << std::endl;
         return false;
       }
 
       clearColor(settings.clearColor);
+
+      _resolution = { settings.width, settings.height };
 
       return true;
     }
@@ -156,7 +168,13 @@ namespace yaron {
       glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(polygonMode));
     }
 
-    float RenderContext::aspectRatio() const { return _aspect; }
+    float RenderContext::aspectRatio() const {
+      return static_cast<float>(_resolution.x) / _resolution.y;
+    }
+
+    glm::vec2 RenderContext::resolution() const {
+      return _resolution;
+    }
 
     void RenderContext::clearColor(const Color &c) {
       glClearColor(c.r, c.g, c.b, c.a);
